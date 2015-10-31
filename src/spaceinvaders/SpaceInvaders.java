@@ -6,6 +6,7 @@
 package spaceinvaders;
 
 import environment.ApplicationStarter;
+import java.awt.Dimension;
 
 /**
  *
@@ -17,9 +18,9 @@ public class SpaceInvaders {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        ApplicationStarter.run("Space Invaders", new SpaceEnvironment());
-        
+        startUp();
     }
-    
+
+    private static void startUp() {
+        ApplicationStarter.run(new String[0], "Space Invaders", new Dimension(640, 640), new SpaceEnvironment());    }
 }

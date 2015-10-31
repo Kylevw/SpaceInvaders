@@ -7,23 +7,25 @@ package spaceinvaders;
 
 import static environment.Utility.random;
 import java.awt.Color;
-import static java.awt.Color.blue;
 import java.awt.Graphics;
 
 /**
  *
  * @author Kyle
  */
-public class Star {
-
-    {
-        size = 3;
-        x = 10;
-        y = 0;
-
-    }
+public class Ship {
     
-    public Star(int x, int y, int size) {
+    int x;
+    int y;
+    int size;
+    int invulTimer;
+    boolean isFast;
+    int health;
+    boolean rapidFire;
+    int fireCooldown;
+    int shieldTimer;
+    
+    public Ship(int x, int y, int size) {
         
         this.x = x;
         this.y = y;
@@ -34,32 +36,28 @@ public class Star {
     public void draw(Graphics graphics) {
         
         graphics.setColor(Color.WHITE);
-        graphics.fillRect(x, y, size + 1, (size + 1) * 5);
+        graphics.fillRect(x, y, size, size);
         
     }
     
-    int x;
-    int y;
-    int size;
-    
-    void setY(int yChange) {
-        
-        this.y = this.y + ((yChange * (size + 3)));
-        
+    void setX(int newX) {
+        this.x = newX;
     }
     
-    void resetStar() {
-        
-        this.y = this.y - 640 - random(640);
-        this.x = random(640);
-        this.size = random(3);
-        
+    void moveX(int xChange) {
+        this.x = this.x + xChange;
     }
     
-    int getY() {
-        
-        return this.y;
-        
+    int getX() {
+        return this.x;
     }
-  
+    
+    boolean hasRapidFire() {
+        return this.rapidFire;
+    }
+    
+    boolean hasSpeed() {
+        return this.isFast;
+    }
+    
 }

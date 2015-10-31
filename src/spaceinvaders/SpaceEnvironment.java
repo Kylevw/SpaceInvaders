@@ -18,19 +18,26 @@ import java.util.ArrayList;
  */
 class SpaceEnvironment extends Environment {
     
-    ArrayList<Star> stars;
+    private ArrayList<Star> stars;
+    private Ship ship;
+
+    private int direction;
+    
+    private int yChange;
+    private Object event;
 
     public SpaceEnvironment() {
-      
-        stars = new ArrayList<>();
-        int starCount = 40;
-        
-        
-        for (int i = 0; i < starCount; i++) {
-            stars.add(new Star(random(900), random(580), random(3), random(random(8))));
-        }        
         
         this.setBackground(Color.BLACK);
+        
+        ship = new Ship(32, 496, 64);
+        
+        stars = new ArrayList<>();
+        int starCount = 50;
+        
+        for (int i = 0; i < starCount; i++) {
+            stars.add(new Star(random(640), random(640), random(3)));
+        }        
         
     }
     
@@ -46,10 +53,42 @@ class SpaceEnvironment extends Environment {
 
     @Override
     public void timerTaskHandler() {
+        
+        if (stars != null) {
+        
+        yChange = (1) + 2;
+        
+        stars.stream().forEach((theStar) -> {
+            theStar.setY(yChange);
+            
+            if (theStar.getY() >= 640) {
+                
+                theStar.resetStar();
+            }
+            
+        });
+        
+        }
+        
     }
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
+        
+        if (e.getKeyCode() == 39) {
+            ship.moveX(64);
+            if (ship.getX() >= 544) {
+                ship.setX(544);
+            }
+        }
+        
+        if (e.getKeyCode() == 37) {
+            ship.moveX(-64);
+            if (ship.getX() <= 32) {
+                ship.setX(32);
+            }
+        }
+        
     }
 
     @Override
@@ -66,6 +105,12 @@ class SpaceEnvironment extends Environment {
         stars.stream().forEach((theStar) -> {
             theStar.draw(graphics);
         });
+        
+        if (ship != null) {
+            
+            ship.draw(graphics);
+            
+        }
         
     }
     
