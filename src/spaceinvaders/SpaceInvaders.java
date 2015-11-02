@@ -22,5 +22,6 @@ public class SpaceInvaders {
     }
 
     private static void startUp() {
-        ApplicationStarter.run(new String[0], "Space Invaders", new Dimension(640, 640), new SpaceEnvironment());    }
+        ApplicationStarter.run(new String[0], "Space Invaders", new Dimension(640, 640), new SpaceEnvironment());
+    }
 }

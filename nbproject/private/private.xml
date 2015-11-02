@@ -5,8 +5,8 @@
         <group>
             <file>file:/Users/Kyle/NetBeansProjects/SpaceInvaders/src/spaceinvaders/SpaceEnvironment.java</file>
             <file>file:/Users/Kyle/NetBeansProjects/SpaceInvaders/src/spaceinvaders/Ship.java</file>
+            <file>file:/Users/Kyle/NetBeansProjects/SpaceInvaders/src/spaceinvaders/ShipMovementLimitProvider.java</file>
             <file>file:/Users/Kyle/NetBeansProjects/SpaceInvaders/src/spaceinvaders/SpaceInvaders.java</file>
-            <file>file:/Users/Kyle/NetBeansProjects/SpaceInvaders/src/spaceinvaders/Star.java</file>
         </group>
     </open-files>
 </project-private>
