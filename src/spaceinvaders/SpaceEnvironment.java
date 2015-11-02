@@ -6,8 +6,10 @@
 package spaceinvaders;
 
 import environment.Environment;
+import images.ResourceTools;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -19,18 +21,22 @@ import java.util.ArrayList;
 class SpaceEnvironment extends Environment {
     
     private ArrayList<Star> stars;
-    private Ship ship;
+    Ship ship;
 
     private int direction;
     
-    private int yChange;
-    private Object event;
+    private int yStarChange;
+    
+    private int shipSpeed;
+    private int shipVelocity;
 
     public SpaceEnvironment() {
         
+        shipSpeed = 12;
+        
         this.setBackground(Color.BLACK);
         
-        ship = new Ship(32, 496, 64);
+        ship = new Ship(292, 504, 64);
         
         stars = new ArrayList<>();
         int starCount = 50;
@@ -56,10 +62,10 @@ class SpaceEnvironment extends Environment {
         
         if (stars != null) {
         
-        yChange = (1) + 2;
+        yStarChange = (1) + 2;
         
         stars.stream().forEach((theStar) -> {
-            theStar.setY(yChange);
+            theStar.setY(yStarChange);
             
             if (theStar.getY() >= 640) {
                 
@@ -76,23 +82,42 @@ class SpaceEnvironment extends Environment {
     public void keyPressedHandler(KeyEvent e) {
         
         if (e.getKeyCode() == 39) {
-            ship.moveX(64);
-            if (ship.getX() >= 544) {
-                ship.setX(544);
-            }
+                shipVelocity = shipSpeed;
         }
         
         if (e.getKeyCode() == 37) {
-            ship.moveX(-64);
-            if (ship.getX() <= 32) {
-                ship.setX(32);
-            }
+                shipVelocity = -shipSpeed;
+        }
+        
+        if (e.getKeyCode() == 70) {
+                ship.toggleSpeed();
+        }
+        
+        if (e.getKeyCode() == 71) {
+            System.out.println("Bleh");
         }
         
     }
-
+    
     @Override
     public void keyReleasedHandler(KeyEvent e) {
+        
+        if (e.getKeyCode() == 39) {
+                shipVelocity = shipVelocity - shipSpeed;
+        }
+        
+        if (e.getKeyCode() == 37) {
+                shipVelocity = shipVelocity + shipSpeed;
+        }
+        
+        if (shipVelocity >= shipSpeed) {
+            shipVelocity = shipSpeed;
+        }
+        
+        if (shipVelocity <= -shipSpeed) {
+            shipVelocity = -shipSpeed;
+        }
+        
     }
 
     @Override
@@ -101,6 +126,8 @@ class SpaceEnvironment extends Environment {
 
     @Override
     public void paintEnvironment(Graphics graphics) {
+        
+        ship.moveX(shipVelocity);
         
         stars.stream().forEach((theStar) -> {
             theStar.draw(graphics);

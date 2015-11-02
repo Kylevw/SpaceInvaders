@@ -38,13 +38,13 @@ public class Star {
         
     }
     
-    int x;
-    int y;
-    int size;
+    private int x;
+    private int y;
+    private int size;
     
     void setY(int yChange) {
         
-        this.y = this.y + ((yChange * (size + 3)));
+        this.y = y + ((yChange * (size + 3)));
         
     }
     

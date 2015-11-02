@@ -5,9 +5,10 @@
  */
 package spaceinvaders;
 
-import static environment.Utility.random;
-import java.awt.Color;
+import images.ResourceTools;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.ImageObserver;
 
 /**
  *
@@ -35,17 +36,39 @@ public class Ship {
     
     public void draw(Graphics graphics) {
         
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(x, y, size, size);
+        ship = ResourceTools.loadImageFromResource("spaceinvaders/spritesheet.png");
+        
+        if (ship != null) {
+            graphics.drawImage(ship, x, y, x + 48, y + 48, 0, 112, 16, 128, null);
+        }
+        
+        if (isFast == true) {
+            graphics.drawImage(ship, x - 3, y - 3, x + 51, y + 51, 36, 110, 54, 128, null);
+        }
         
     }
+    
+    Image ship = null;
     
     void setX(int newX) {
         this.x = newX;
     }
     
     void moveX(int xChange) {
+        
+        if (isFast == true) {
+            xChange = xChange * 2;
+        }
+        
         this.x = this.x + xChange;
+        
+        if (x >= 568) {
+            x = 568;
+        }
+        if (x <= 24) {
+            x = 24;
+        }
+        
     }
     
     int getX() {
@@ -58,6 +81,14 @@ public class Ship {
     
     boolean hasSpeed() {
         return this.isFast;
+    }
+
+    void toggleSpeed() {
+        if (isFast == false) {
+            isFast = true;
+        } else {
+            isFast = false;
+        }
     }
     
 }
