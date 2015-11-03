@@ -10,7 +10,6 @@ import audio.SoundManager;
 import audio.Source;
 import audio.Track;
 import environment.Environment;
-import images.ImageManager;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -45,7 +44,7 @@ class SpaceEnvironment extends Environment {
         ship = new Ship(292, 640, 48, new ShipMovementLimitProvider(24, 568, 504, 640), im);
         
         stars = new ArrayList<>();
-        int starCount = 50;
+        int starCount = 64;
         
         for (int i = 0; i < starCount; i++) {
             stars.add(new Star(random(640), random(640), random(3)));
@@ -55,9 +54,12 @@ class SpaceEnvironment extends Environment {
         tracks.add(new Track("GAME", Source.RESOURCE, "/spaceinvaders/game_new.wav"));
         
         sm = new SoundManager(new Playlist(tracks));
+        
+        sm.play("GAME", Integer.MAX_VALUE);
+        
     }
     
-    public void loadImages(){
+    public void loadImages() {
         im = new SpriteManager();
     }
     
@@ -75,10 +77,9 @@ class SpaceEnvironment extends Environment {
     public void timerTaskHandler() {
         
         if (stars != null) {
-        
-        yStarChange = (1) + 2;
-        
-        stars.stream().forEach((theStar) -> {
+            yStarChange = (1) + 2;
+            
+            stars.stream().forEach((theStar) -> {
             theStar.setY(yStarChange);
             
             if (theStar.getY() >= 640) {
@@ -87,21 +88,28 @@ class SpaceEnvironment extends Environment {
             }
             
         });
-        
+            
         }
         
-        if (shipVelocity >= shipSpeed) {
-            shipVelocity = shipSpeed;
-        }
+        if (ship != null) {
+            
+            if (shipVelocity >= shipSpeed) {
+                shipVelocity = shipSpeed;
+            } else if (shipVelocity <= -shipSpeed) {
+                shipVelocity = -shipSpeed;
+            }
+            
+            ship.moveX(shipVelocity);
         
-        if (shipVelocity <= -shipSpeed) {
-            shipVelocity = -shipSpeed;
-        }
-        
-        ship.moveX(shipVelocity);
-        
-        if (ship.getY() >= 504) {
-            ship.moveY(1);
+            if (ship.getY() >= 504) {
+                ship.moveY(1);
+            }
+            
+            if (ship.getFireCooldown() == 0) {
+                ship.addEnergy();
+            } else {
+                ship.fireCooldown();
+            }
         }
         
     }
@@ -111,16 +119,16 @@ class SpaceEnvironment extends Environment {
         
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             shipVelocity = shipSpeed;
-        } else if (e.getKeyCode() == 37) {
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             shipVelocity = -shipSpeed;
-        } else if (e.getKeyCode() == 70) {
+        } else if (e.getKeyCode() == KeyEvent.VK_F) {
             ship.toggleSpeed();
-        } else if (e.getKeyCode() == 71) {
+        } else if (e.getKeyCode() == KeyEvent.VK_G) {
             ship.toggleDoubleFire();
-        } else if (e.getKeyCode() == 72) {
+        } else if (e.getKeyCode() == KeyEvent.VK_H) {
             ship.toggleShield();
-        } else if (e.getKeyCode() == KeyEvent.VK_P) {
-            sm.play("GAME");
+        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            ship.fire();
         }
                 
 
@@ -129,11 +137,11 @@ class SpaceEnvironment extends Environment {
     @Override
     public void keyReleasedHandler(KeyEvent e) {
         
-        if (e.getKeyCode() == 39) {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 shipVelocity = shipVelocity - shipSpeed;
         }
         
-        if (e.getKeyCode() == 37) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                 shipVelocity = shipVelocity + shipSpeed;
         }
         

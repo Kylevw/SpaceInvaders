@@ -15,13 +15,6 @@ import java.awt.Graphics;
  * @author Kyle
  */
 public class Star {
-
-    {
-        size = 3;
-        x = 10;
-        y = 0;
-
-    }
     
     public Star(int x, int y, int size) {
         

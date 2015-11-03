@@ -16,6 +16,11 @@ import java.awt.image.ImageObserver;
  */
 public class Ship {
     
+    {
+        health = 12;
+        energy = 12;
+    }
+    
     int x;
     int y;
     int size;
@@ -23,6 +28,7 @@ public class Ship {
     int invulTimer;
     int health;
     
+    int energy;
     int fireCooldown;
     
     int powerUpTimer;
@@ -45,39 +51,37 @@ public class Ship {
     }
     
     public void draw(Graphics graphics) {
-//       BufferedImage.
-//        ship = ResourceTools.loadImageFromResource("spaceinvaders/spritesheet.png");
         
-        graphics.drawImage(imageProvider.getImage(SpriteManager.SHIP), (x * size / 48), (y * size / 48), x + (size), y + (size), 0, 112, 16, 128, null);
-        graphics.drawRect((x * size / 48), (y * size / 48), x + (size), y + (size));
+        graphics.drawImage(imageProvider.getImage(SpriteManager.SHIP), (x * size / 48), (y * size / 48), size, size, null);
         
         if (hasSpeed == true) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), x - 3, y - 3, x + 51, y + 51, 38, 110, 56, 128, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), x - (size / 16), y - (size / 16), size * 9 / 8, size * 9 / 8, null);
         }
         
         if (hasDoubleFire == true) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), x - 3, y - 3, x + 51, y + 51, 56, 110, 74, 128, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), x - (size / 16), y - (size / 16), size * 9 / 8, size * 9 / 8, null);
         }
         
         if (hasShield == true) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), x - 9, y - 6, x + 57, y + 60, 16, 106, 38, 128, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), x - (size / 4), y - (3 * size / 16), size * 3 / 2, size * 3 / 2, null);
         }
-//        if (ship != null) {
-//            graphics.drawImage(ship, (x * size / 48), (y * size / 48), x + (size), y + (size), 0, 112, 16, 128, null);
-//        }
-//        
-//        if (hasSpeed == true) {
-//            graphics.drawImage(ship, x - 3, y - 3, x + 51, y + 51, 38, 110, 56, 128, null);
-//        }
-//        
-//        if (hasDoubleFire == true) {
-//            graphics.drawImage(ship, x - 3, y - 3, x + 51, y + 51, 56, 110, 74, 128, null);
-//        }
-//        
-//        if (hasShield == true) {
-//            graphics.drawImage(ship, x - 9, y - 6, x + 57, y + 60, 16, 106, 38, 128, null);
-//        }
-//        
+        
+        for (int i = 0; i < 16; i++) {
+            graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), 480 + (9 * i), 568, 12, 18, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), 480 + (9 * i), 589, 12, 18, null);
+
+        }
+        
+        for (int i = 1; i <= health; i++) {
+            graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FILL), 471 + (9 * i), 568, 12, 18, null);
+        }
+        
+        for (int i = 1; i <= energy; i++) {
+            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FILL), 471 + (9 * i), 589, 12, 18, null);
+        }
+        
+        
+        
     }
     
     void setX(int newX) {
@@ -139,6 +143,30 @@ public class Ship {
     
     void moveY(int yChange) {
         this.y = y - yChange;
+    }
+    
+    void fire() {
+        fireCooldown = 40;
+        if (energy > 0) {
+            System.out.println("*Fire Sound*");
+        } else {
+            System.out.println("No ammo :(");
+        }
+        energy--;
+    }
+    
+    int getFireCooldown() {
+        return fireCooldown;
+    }
+    
+    void fireCooldown() {
+        fireCooldown--;
+    }
+
+    void addEnergy() {
+        if (energy <= 15) {
+            energy ++;
+        }
     }
     
 }

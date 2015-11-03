@@ -7,7 +7,6 @@ package spaceinvaders;
 
 import environment.Actor;
 import environment.Velocity;
-import images.ResourceTools;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
@@ -18,7 +17,6 @@ import java.awt.image.BufferedImage;
 public class Projectile extends Actor {
 
     public Projectile(BufferedImage image, Point position, Velocity velocity) {
-//        ResourceTools.loadImageFromResource("spaceinvaders/spritesheet.png").
         super(image, position, velocity);
     }
     
