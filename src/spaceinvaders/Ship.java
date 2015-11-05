@@ -5,10 +5,15 @@
  */
 package spaceinvaders;
 
-import images.ResourceTools;
+import audio.Playlist;
+import audio.SoundManager;
+import audio.Source;
+import audio.Track;
+import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.image.ImageObserver;
+import java.awt.Point;
+import java.util.ArrayList;
 
 /**
  *
@@ -17,15 +22,31 @@ import java.awt.image.ImageObserver;
 public class Ship {
     
     {
-        health = 12;
-        energy = 12;
+        health = 1;
+        energy = 16;
+        speed = 12;
+        
+        ArrayList<Track> tracks = new ArrayList<>();
+        tracks.add(new Track("FIRE", Source.RESOURCE, "/spaceinvaders/fire.wav"));
+        
+        sm = new SoundManager(new Playlist(tracks));
+        
+        projectiles = new ArrayList<>();
+        
     }
+    
+    SoundManager sm;
+    
+    ArrayList<Projectile> projectiles;
     
     int x;
     int y;
     int size;
+    int speed;
     
     int invulTimer;
+    int meterTimer;
+    int healthRegen;
     int health;
     
     int energy;
@@ -33,13 +54,11 @@ public class Ship {
     
     int powerUpTimer;
     boolean hasSpeed;
-    boolean hasDoubleFire;
+    boolean hasRapidFire;
     boolean hasShield;
     private MovementLimitProviderIntf limiter;
     Image ship;
     private final SpriteProviderIntf imageProvider;
-    
-    
     
     public Ship(int x, int y, int size, MovementLimitProviderIntf limiter, SpriteProviderIntf imageProvider) {
         
@@ -48,6 +67,7 @@ public class Ship {
         this.y = y;
         this.size = size;
         this.imageProvider = imageProvider;
+        
     }
     
     public void draw(Graphics graphics) {
@@ -58,7 +78,7 @@ public class Ship {
             graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), x - (size / 16), y - (size / 16), size * 9 / 8, size * 9 / 8, null);
         }
         
-        if (hasDoubleFire == true) {
+        if (hasRapidFire == true) {
             graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), x - (size / 16), y - (size / 16), size * 9 / 8, size * 9 / 8, null);
         }
         
@@ -67,9 +87,24 @@ public class Ship {
         }
         
         for (int i = 0; i < 16; i++) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), 480 + (9 * i), 568, 12, 18, null);
-            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), 480 + (9 * i), 589, 12, 18, null);
-
+            if (health > 4) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), 480 + (9 * i), 568, 12, 18, null);
+            } else if (meterTimer > 2) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), 480 + (9 * i), 568, 12, 18, null);
+            } else {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FLASH), 480 + (9 * i), 568, 12, 18, null);
+            }
+        }
+        
+        
+        for (int i = 0; i < 16; i++) {
+            if (energy > 0) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), 480 + (9 * i), 589, 12, 18, null);
+            } else if (meterTimer > 2) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), 480 + (9 * i), 589, 12, 18, null);
+            } else {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FLASH), 480 + (9 * i), 589, 12, 18, null);
+            }
         }
         
         for (int i = 1; i <= health; i++) {
@@ -79,9 +114,13 @@ public class Ship {
         for (int i = 1; i <= energy; i++) {
             graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FILL), 471 + (9 * i), 589, 12, 18, null);
         }
-        
-        
-        
+        projectiles.stream().forEach((theProjectile) -> {
+            theProjectile.draw(graphics);
+            theProjectile.applyVelocity();
+            if (theProjectile.getY() < 100) {
+                projectiles.remove(theProjectile);
+            }
+        });
     }
     
     void setX(int newX) {
@@ -113,8 +152,8 @@ public class Ship {
         return this.x;
     }
     
-    boolean hasDoubleFire() {
-        return this.hasDoubleFire;
+    boolean hasRapidFire() {
+        return this.hasRapidFire;
     }
     
     boolean hasSpeed() {
@@ -129,8 +168,8 @@ public class Ship {
         hasSpeed = !hasSpeed;
     }
     
-    void toggleDoubleFire() {
-        hasDoubleFire = !hasDoubleFire;
+    void toggleRapidFire() {
+        hasRapidFire = !hasRapidFire;
     }
     
     void toggleShield() {
@@ -142,31 +181,57 @@ public class Ship {
     }
     
     void moveY(int yChange) {
-        this.y = y - yChange;
+        this.y = y + yChange;
     }
     
     void fire() {
-        fireCooldown = 40;
-        if (energy > 0) {
-            System.out.println("*Fire Sound*");
-        } else {
-            System.out.println("No ammo :(");
+        
+        if (energy > 0 || hasRapidFire == true) {
+            sm.play("FIRE");
+            projectiles.add(new Projectile(imageProvider.getImage(SpriteManager.PROJECTILE), new Point(x + (3 * size / 16), y), (size / 16), new Velocity(0, -36)));
+            projectiles.add(new Projectile(imageProvider.getImage(SpriteManager.PROJECTILE), new Point(x + (3 * size / 4), y), (size / 16), new Velocity(0, -36)));
+            energy--;
         }
-        energy--;
+        
+        if (hasRapidFire == true) {
+            energy++;
+        } else if (energy == 0) {
+            fireCooldown = 80;
+        } else {
+            fireCooldown = 40;
+        }
     }
     
-    int getFireCooldown() {
-        return fireCooldown;
-    }
-    
-    void fireCooldown() {
-        fireCooldown--;
+    void shipTimerTaskHandler() {
+        
+        if (y >= 504) {
+            y--;
+        }
+        
+        if (meterTimer < 4) {
+            meterTimer++;
+        } else {
+            meterTimer = 0;
+        }
+        
+        if (fireCooldown == 0) {
+            if (energy <= 15) {
+                energy ++;
+            }
+        } else {
+            fireCooldown--;
+        }
+        if (health < 16) {
+            healthRegen++;
+            if (healthRegen >= 160) {
+                health++;
+                healthRegen = 0;
+            }
+        }
+        
     }
 
-    void addEnergy() {
-        if (energy <= 15) {
-            energy ++;
-        }
+    int getSpeed() {
+        return speed;
     }
-    
 }
