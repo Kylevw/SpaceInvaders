@@ -28,17 +28,28 @@ class SpaceEnvironment extends Environment {
     private int direction;
     private int yStarChange;
     private int shipVelocity;
+    private boolean spacebarDebug;
     
-    SoundManager sm;
+    private int level;
+    
+    StatMeter healthMeter;
+    StatMeter energyMeter;
+    
+    AudioManager am;
     SpriteManager im;
     
     public SpaceEnvironment() {
+        
+        level = 1;
         
         loadImages();
         
         this.setBackground(Color.BLACK);
         
-        ship = new Ship(292, 640, 48, new ShipMovementLimitProvider(24, 568, 504, 640), im);
+        ship = new Ship(292, 640, 48, new ShipMovementLimitProvider(24, 568, 504, 640), im, am);
+        healthMeter = new StatMeter(false, 16, 4, 480, 568, 3,im);
+        energyMeter = new StatMeter(true, 16, 0, 480, 589, 3, im);
+
         
         stars = new ArrayList<>();
         int starCount = 64;
@@ -47,12 +58,9 @@ class SpaceEnvironment extends Environment {
             stars.add(new Star(random(640), random(640), random(3)));
         }
         
-        ArrayList<Track> tracks = new ArrayList<>();
-        tracks.add(new Track("GAME", Source.RESOURCE, "/spaceinvaders/game_new.wav"));
+        am = new AudioManager();
         
-        sm = new SoundManager(new Playlist(tracks));
-        
-        sm.play("GAME", Integer.MAX_VALUE);
+        am.playAudio("GAME", Integer.MAX_VALUE);
         
     }
     
@@ -74,7 +82,7 @@ class SpaceEnvironment extends Environment {
     public void timerTaskHandler() {
         
         if (stars != null) {
-            yStarChange = (1) + 2;
+            yStarChange = ((level + 1) / 2) + 2;
             
             stars.stream().forEach((theStar) -> {
             theStar.setY(yStarChange);
@@ -98,16 +106,23 @@ class SpaceEnvironment extends Environment {
             ship.moveX(shipVelocity);
             ship.shipTimerTaskHandler();
             
+            if (healthMeter != null) {
+                healthMeter.setValue(ship.getHealth());
+                healthMeter.meterTimeTaskHandler();
+            }
+            if (energyMeter != null) {
+                energyMeter.setValue(ship.getEnergy());
+                energyMeter.meterTimeTaskHandler();
+            }   
         }
-        
     }
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
         
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() ==KeyEvent.VK_D) {
             shipVelocity = ship.getSpeed();
-        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() ==KeyEvent.VK_A) {
             shipVelocity = -ship.getSpeed();
         } else if (e.getKeyCode() == KeyEvent.VK_F) {
             ship.toggleSpeed();
@@ -115,22 +130,27 @@ class SpaceEnvironment extends Environment {
             ship.toggleRapidFire();
         } else if (e.getKeyCode() == KeyEvent.VK_H) {
             ship.toggleShield();
-        } else if (e.getKeyCode() == KeyEvent.VK_SPACE && ship.getY() <= 504) {
+        } else if (e.getKeyCode() == KeyEvent.VK_SPACE && ship.getY() <= 504 && spacebarDebug == false) {
             ship.fire();
+            spacebarDebug = true;
+        } else if (e.getKeyCode() == KeyEvent.VK_P && level < 10) {
+            level = level + 2;
+        } else if (e.getKeyCode() == KeyEvent.VK_O && level > 1) {
+            level = level - 2;
         }
-                
-
     }
     
     @Override
     public void keyReleasedHandler(KeyEvent e) {
         
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() ==KeyEvent.VK_D) {
                 shipVelocity = shipVelocity - ship.getSpeed();
         }
         
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() ==KeyEvent.VK_A) {
                 shipVelocity = shipVelocity + ship.getSpeed();
+        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            spacebarDebug = false;
         }
         
     }
@@ -147,10 +167,15 @@ class SpaceEnvironment extends Environment {
         });
         
         if (ship != null) {
-            
             ship.draw(graphics);
-            
         }
         
+        if (healthMeter != null) {
+            healthMeter.draw(graphics);
+        }
+        
+        if (energyMeter != null) {
+            energyMeter.draw(graphics);
+        }
     }
 }

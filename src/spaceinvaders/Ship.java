@@ -11,7 +11,6 @@ import audio.Source;
 import audio.Track;
 import environment.Velocity;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -56,11 +55,10 @@ public class Ship {
     boolean hasSpeed;
     boolean hasRapidFire;
     boolean hasShield;
-    private MovementLimitProviderIntf limiter;
-    Image ship;
+    private final MovementLimitProviderIntf limiter;
     private final SpriteProviderIntf imageProvider;
     
-    public Ship(int x, int y, int size, MovementLimitProviderIntf limiter, SpriteProviderIntf imageProvider) {
+    public Ship(int x, int y, int size, MovementLimitProviderIntf limiter, SpriteProviderIntf imageProvider, AudioPlayerIntf audioPlayer) {
         
         this.limiter = limiter;
         this.x = x;
@@ -86,41 +84,17 @@ public class Ship {
             graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), x - (size / 4), y - (3 * size / 16), size * 3 / 2, size * 3 / 2, null);
         }
         
-        for (int i = 0; i < 16; i++) {
-            if (health > 4) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), 480 + (9 * i), 568, 12, 18, null);
-            } else if (meterTimer > 2) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), 480 + (9 * i), 568, 12, 18, null);
-            } else {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FLASH), 480 + (9 * i), 568, 12, 18, null);
-            }
-        }
+        ArrayList<Projectile> outOfBounds = new ArrayList<>();
         
-        
-        for (int i = 0; i < 16; i++) {
-            if (energy > 0) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), 480 + (9 * i), 589, 12, 18, null);
-            } else if (meterTimer > 2) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), 480 + (9 * i), 589, 12, 18, null);
-            } else {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FLASH), 480 + (9 * i), 589, 12, 18, null);
-            }
-        }
-        
-        for (int i = 1; i <= health; i++) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FILL), 471 + (9 * i), 568, 12, 18, null);
-        }
-        
-        for (int i = 1; i <= energy; i++) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FILL), 471 + (9 * i), 589, 12, 18, null);
-        }
         projectiles.stream().forEach((theProjectile) -> {
             theProjectile.draw(graphics);
             theProjectile.applyVelocity();
-            if (theProjectile.getY() < 100) {
-                projectiles.remove(theProjectile);
+            if (theProjectile.getY() < -24) {
+                outOfBounds.add(theProjectile);
             }
         });
+
+        projectiles.removeAll(outOfBounds);
     }
     
     void setX(int newX) {
@@ -145,43 +119,33 @@ public class Ship {
         if (x <= limiter.getMinX()) {
             x = limiter.getMinX();
         }
-        
     }
-    
+    void moveY(int yChange) {
+        this.y = y + yChange;
+    }
     int getX() {
         return this.x;
     }
-    
-    boolean hasRapidFire() {
-        return this.hasRapidFire;
-    }
-    
-    boolean hasSpeed() {
-        return this.hasSpeed;
-    }
-    
-    boolean hasShield() {
-        return this.hasShield;
-    }
-
-    void toggleSpeed() {
-        hasSpeed = !hasSpeed;
-    }
-    
-    void toggleRapidFire() {
-        hasRapidFire = !hasRapidFire;
-    }
-    
-    void toggleShield() {
-        hasShield = !hasShield;
-    }
-
     int getY() {
         return this.y;
     }
-    
-    void moveY(int yChange) {
-        this.y = y + yChange;
+    boolean hasRapidFire() {
+        return this.hasRapidFire;
+    }
+    boolean hasSpeed() {
+        return this.hasSpeed;
+    }
+    boolean hasShield() {
+        return this.hasShield;
+    }
+    void toggleSpeed() {
+        hasSpeed = !hasSpeed;
+    }
+    void toggleRapidFire() {
+        hasRapidFire = !hasRapidFire;
+    }
+    void toggleShield() {
+        hasShield = !hasShield;
     }
     
     void fire() {
@@ -207,12 +171,12 @@ public class Ship {
         if (y >= 504) {
             y--;
         }
-        
-        if (meterTimer < 4) {
-            meterTimer++;
-        } else {
-            meterTimer = 0;
-        }
+//        
+//        if (meterTimer < 4) {
+//            meterTimer++;
+//        } else {
+//            meterTimer = 0;
+//        }
         
         if (fireCooldown == 0) {
             if (energy <= 15) {
@@ -233,5 +197,11 @@ public class Ship {
 
     int getSpeed() {
         return speed;
+    }
+    int getHealth() {
+        return health;
+    }
+    int getEnergy() {
+        return energy;
     }
 }
