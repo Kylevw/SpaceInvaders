@@ -29,6 +29,12 @@ public class SpriteManager implements SpriteProviderIntf {
     public static String BLUE_METER = "BLUE_METER";
     public static String BLUE_METER_FILL = "BLUE_METER_FILL";
     public static String BLUE_METER_FLASH = "BLUE_METER_FLASH";
+    public static String YELLOW_METER = "YELLOW_METER";
+    public static String YELLOW_METER_FILL = "YELLOW_METER_FILL";
+    public static String YELLOW_METER_FLASH = "YELLOW_METER_FLASH";
+    public static String GREEN_METER = "GREEN_METER";
+    public static String GREEN_METER_FILL = "GREEN_METER_FILL";
+    public static String GREEN_METER_FLASH = "GREEN_METER_FLASH";
 
     
     private ImageManager im;
@@ -48,7 +54,12 @@ public class SpriteManager implements SpriteProviderIntf {
         imageMap.put(BLUE_METER, spriteSheet.getSubimage(12, 98, 4, 6));
         imageMap.put(BLUE_METER_FILL, spriteSheet.getSubimage(20, 98, 4, 6));
         imageMap.put(BLUE_METER_FLASH, spriteSheet.getSubimage(16, 98, 4, 6));
-
+        imageMap.put(YELLOW_METER, spriteSheet.getSubimage(24, 98, 4, 6));
+        imageMap.put(YELLOW_METER_FILL, spriteSheet.getSubimage(32, 98, 4, 6));
+        imageMap.put(YELLOW_METER_FLASH, spriteSheet.getSubimage(28, 98, 4, 6));
+        imageMap.put(GREEN_METER, spriteSheet.getSubimage(36, 98, 4, 6));
+        imageMap.put(GREEN_METER_FILL, spriteSheet.getSubimage(44, 98, 4, 6));
+        imageMap.put(GREEN_METER_FLASH, spriteSheet.getSubimage(40, 98, 4, 6));
         
         im = new ImageManager(imageMap);
     }
@@ -57,5 +68,4 @@ public class SpriteManager implements SpriteProviderIntf {
     public BufferedImage getImage(String name){
         return (BufferedImage) im.getImage(name);
     }
-    
 }

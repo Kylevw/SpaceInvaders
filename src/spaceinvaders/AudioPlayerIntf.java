@@ -11,7 +11,7 @@ package spaceinvaders;
  */
 public interface AudioPlayerIntf {
     
-    public void playAudio(String name, int loopCount);
+    public void playAudio(String name, boolean loop);
     public void stopAudio(String name);
     
 }

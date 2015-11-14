@@ -17,25 +17,39 @@ import java.util.ArrayList;
  */
 public class AudioManager implements AudioPlayerIntf {
     
-    private SoundManager sm;
+    private SoundManager am;
     private ArrayList<Track> tracks = new ArrayList<>();
     
+    public static String FIRE = "FIRE";
+    public static String GAME = "GAME";
+    public static String MENU = "MENU";
+    public static String POWER_UP = "POWER_UP";
+        public static String LOSE_POWER_UP = "LOSE_POWER_UP";
+
+
+    
     {
-        tracks.add(new Track("GAME", Source.RESOURCE, "/spaceinvaders/game_new.wav"));
-        tracks.add(new Track("FIRE", Source.RESOURCE, "/spaceinvaders/fire.wav"));
-        sm = new SoundManager(new Playlist(tracks));
+        tracks.add(new Track(GAME, Source.RESOURCE, "/spaceinvaders/game.wav"));
+        tracks.add(new Track(FIRE, Source.RESOURCE, "/spaceinvaders/fire.wav"));
+        tracks.add(new Track(MENU, Source.RESOURCE, "/spaceinvaders/menu.wav"));
+        tracks.add(new Track(POWER_UP, Source.RESOURCE, "/spaceinvaders/powerup.wav"));
+        tracks.add(new Track(LOSE_POWER_UP, Source.RESOURCE, "/spaceinvaders/lose_powerup.wav"));
+
+        am = new SoundManager(new Playlist(tracks));
     }
     
     @Override
-    public void playAudio(String name, int loopCount) {
-        sm.play(name, loopCount);
+    public void playAudio(String name, boolean loop) {
+        if (loop == true) {
+            am.play(name, Integer.MAX_VALUE);
+        } else {
+            am.play(name);
+        }
     }
 
     @Override
     public void stopAudio(String name) {
-        sm.stop(name);
+        am.stop(name);
     }
-    
-    
     
 }
