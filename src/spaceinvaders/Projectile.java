@@ -32,7 +32,7 @@ public class Projectile extends Actor {
         graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size, size * 6, null);
     }
     
-    public void applyVelocity() {
+    public void projectileTimeTaskHandler() {
         position = new Point((int) (position.getX() + (velocity.getX())), (int) (position.getY() + (velocity.getY())));
     }
     
@@ -42,5 +42,9 @@ public class Projectile extends Actor {
     
     public int getY() {
         return (int) (position.getY());
+    }
+
+    int getSize() {
+        return size;
     }
 }

@@ -7,7 +7,6 @@ package spaceinvaders;
 
 import static environment.Utility.random;
 import java.awt.Color;
-import static java.awt.Color.blue;
 import java.awt.Graphics;
 
 /**
@@ -17,18 +16,14 @@ import java.awt.Graphics;
 public class Star {
     
     public Star(int x, int y, int size) {
-        
         this.x = x;
         this.y = y;
         this.size = size;
-        
     }
     
     public void draw(Graphics graphics) {
-        
         graphics.setColor(Color.WHITE);
         graphics.fillRect(x, y, size + 1, (size + 1) * 5);
-        
     }
     
     private int x;
@@ -36,23 +31,17 @@ public class Star {
     private int size;
     
     void setY(int yChange) {
-        
         this.y = y + ((yChange * (size + 3)));
-        
     }
     
     void resetStar() {
-        
         this.y = this.y - 640 - random(640);
         this.x = random(640);
         this.size = random(3);
-        
     }
     
     int getY() {
-        
         return this.y;
-        
     }
   
 }

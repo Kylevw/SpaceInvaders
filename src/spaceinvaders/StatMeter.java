@@ -51,7 +51,7 @@ public class StatMeter {
     }
     
     public void draw(Graphics graphics) {
-        
+        // if statements decide which color should be drawn, and wether the meter is flashing or not
         if (color == 1) {
             for (int i = 0; i < maxValue; i++) {
                 if (value > maxFlash || meterTimer < 2) {
@@ -107,11 +107,13 @@ public class StatMeter {
     }
     
     public void meterTimeTaskHandler() {
+        // timer for the meter flash
         if (meterTimer < 4) {
             meterTimer++;
         } else {
             meterTimer = 0;
         }
+        // if the meter value is greater than the max value, set it to max value
         if (value > maxValue) {
             value = maxValue;
         }

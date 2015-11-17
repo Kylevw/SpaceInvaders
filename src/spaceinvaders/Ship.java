@@ -63,6 +63,7 @@ public class Ship {
         
         graphics.drawImage(imageProvider.getImage(SpriteManager.SHIP), (x * size / 48), (y * size / 48), size, size, null);
         
+        // draws power-up tints/overlays
         if (powerUp == RAPID_FIRE) {
             graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), x - (size / 16), y - (size / 16), size * 9 / 8, size * 9 / 8, null);
         } else if (powerUp == SHIELD) {
@@ -78,6 +79,7 @@ public class Ship {
     
     void moveX(int xChange) {
         
+        // doubles speed for the SPEED power-up
         if (powerUp == SPEED) {
             xChange = xChange * 2;
         }
