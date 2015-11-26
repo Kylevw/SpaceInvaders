@@ -10,9 +10,6 @@ package spaceinvaders;
  * @author Kyle
  */
 public class ShipMovementLimitProvider implements MovementLimitProviderIntf {
-
-    
-    
     
     public ShipMovementLimitProvider(int minX, int maxX, int minY, int maxY){
         this.minX = minX;

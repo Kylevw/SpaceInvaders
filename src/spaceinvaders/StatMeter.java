@@ -55,49 +55,49 @@ public class StatMeter {
         if (color == 1) {
             for (int i = 0; i < maxValue; i++) {
                 if (value > maxFlash || meterTimer < 2) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 } else {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FLASH), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FLASH), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 }
             }
             
             for (int i = 0; i < value; i++) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FILL), x + (9 * i), y, 4 * size, 6 * size, null);
+                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_METER_FILL), x + (size * 3 * i), y, 4 * size, 6 * size, null);
             }
         } else if (color == 2) {
             for (int i = 0; i < maxValue; i++) {
                 if (value > maxFlash || meterTimer < 2) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_METER), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_METER), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 } else {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_METER_FLASH), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_METER_FLASH), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 }
             }
             for (int i = 0; i < value; i++) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_METER_FILL), x + (9 * i), y, 4 * size, 6 * size, null);
+                graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_METER_FILL), x + (size * 3 * i), y, 4 * size, 6 * size, null);
             }
         } else if (color == 3) {
             for (int i = 0; i < maxValue; i++) {
                 if (value > maxFlash || meterTimer < 2) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_METER), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_METER), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 } else {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_METER_FLASH), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_METER_FLASH), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 }
             }
             
             for (int i = 0; i < value; i++) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_METER_FILL), x + (9 * i), y, 4 * size, 6 * size, null);
+                graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_METER_FILL), x + (size * 3 * i), y, 4 * size, 6 * size, null);
             }
         } else {
             for (int i = 0; i < maxValue; i++) {
                 if (value > maxFlash || meterTimer < 2) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 } else {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FLASH), x + (9 * i), y, 4 * size, 6 * size, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FLASH), x + (size * 3 * i), y, 4 * size, 6 * size, null);
                 }
             }
             
             for (int i = 0; i < value; i++) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FILL), x + (9 * i), y, 4 * size, 6 * size, null);
+                graphics.drawImage(imageProvider.getImage(SpriteManager.RED_METER_FILL), x + (size * 3 * i), y, 4 * size, 6 * size, null);
             }
         }
     }

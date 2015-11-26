@@ -5,25 +5,25 @@
  */
 package spaceinvaders;
 
+import environment.Actor;
 import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 
 /**
  *
  * @author Kyle
  */
-public class Ship {
+public class Ship extends Actor {
     
     {
         health = 1;
         energy = 16;
-        speed = 12;
     }
     
-    private int x;
-    private int y;
+    private Point position;
+    private Velocity velocity;
     private int size;
     private int speed;
     
@@ -48,12 +48,13 @@ public class Ship {
     private final SpriteProviderIntf imageProvider;
     private final AudioPlayerIntf audioPlayer;
     
-    public Ship(int x, int y, int size, MovementLimitProviderIntf limiter, SpriteProviderIntf imageProvider, AudioPlayerIntf audioPlayer) {
+    public Ship(BufferedImage image, Point position, int size, Velocity velocity, int speed, MovementLimitProviderIntf limiter, SpriteProviderIntf imageProvider, AudioPlayerIntf audioPlayer) {
         
+        super(image, position, velocity);
         this.limiter = limiter;
-        this.x = x;
-        this.y = y;
+        this.position = position;
         this.size = size;
+        this.speed = speed;
         this.imageProvider = imageProvider;
         this.audioPlayer = audioPlayer;
         
@@ -61,50 +62,35 @@ public class Ship {
     
     public void draw(Graphics graphics) {
         
-        graphics.drawImage(imageProvider.getImage(SpriteManager.SHIP), (x * size / 48), (y * size / 48), size, size, null);
+        if (powerUp == SPEED) {
+            graphics.drawImage(getImage(), ((int) position.getX() + (size / 4)), ((int) position.getY() + (size / 4)), size / 2, size / 2, null);
+        } else {
+            graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size, size, null);
+        }
         
         // draws power-up tints/overlays
         if (powerUp == RAPID_FIRE) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), x - (size / 16), y - (size / 16), size * 9 / 8, size * 9 / 8, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), (int) position.getX() - (size / 16), (int) position.getY() - (size / 16), size * 9 / 8, size * 9 / 8, null);
         } else if (powerUp == SHIELD) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), x - (size / 4), y - (3 * size / 16), size * 3 / 2, size * 3 / 2, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), (int) position.getX() - (size / 4), (int) position.getY() - (3 * size / 16), size * 3 / 2, size * 3 / 2, null);
         } else if (powerUp == SPEED) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), x - (size / 16), y - (size / 16), size * 9 / 8, size * 9 / 8, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), (int) position.getX() + (size * 7 / 32), (int) position.getY() + (size * 7 / 32), size * 9 / 16, size * 9 / 16, null);
         }
     }
     
-    void setX(int newX) {
-        this.x = newX;
+    void setX(int x) {
+        position.setLocation(x, position.getY());
     }
     
-    void moveX(int xChange) {
-        
-        // doubles speed for the SPEED power-up
-        if (powerUp == SPEED) {
-            xChange = xChange * 2;
-        }
-        
-        if (y >= limiter.getMinY()) {
-            xChange = 0;
-        }
-        
-        this.x = this.x + xChange;
-        
-        if (x >= limiter.getMaxX()) {
-            x = limiter.getMaxX();
-        }
-        if (x <= limiter.getMinX()) {
-            x = limiter.getMinX();
-        }
+    void setY(int y) {
+        position.setLocation(position.getX(), y);
     }
-    void moveY(int yChange) {
-        this.y = y + yChange;
-    }
+    
     int getX() {
-        return this.x;
+        return (int) position.getX();
     }
     int getY() {
-        return this.y;
+        return (int) position.getY();
     }
     int powerUp() {
         return powerUp;
@@ -128,8 +114,10 @@ public class Ship {
     
     void shipTimerTaskHandler() {
         
-        if (y >= 504) {
-            y--;
+        shipLimiter();
+        
+        if (position.getY() > getMinY() + 1) {
+            setVelocity(0, -1);
         }
         
         if (fireCooldown == 0) {
@@ -158,6 +146,22 @@ public class Ship {
             audioPlayer.playAudio(AudioManager.LOSE_POWER_UP, false);
         }
         
+        move();
+        
+    }
+    
+    private void shipLimiter() {
+        if (limiter.getMinX() > getX()) {
+            setPosition(limiter.getMinX(), getY());
+        } else if (limiter.getMaxX() < getX()) {
+            setPosition(limiter.getMaxX(), getY());
+        }
+        
+        if (limiter.getMinY() > getY()) {
+            setPosition(getX(), limiter.getMinY());
+        } else if (limiter.getMaxY() < getY()) {
+            setPosition(getX(), limiter.getMaxY());
+        }
     }
 
     int getSpeed() {
@@ -186,5 +190,17 @@ public class Ship {
     }
     void setFireCooldown(int fireCooldown) {
         this.fireCooldown = fireCooldown;
+    }
+    int getMaxX() {
+        return limiter.getMaxX();
+    }
+    int getMinX() {
+        return limiter.getMinX();
+    }
+    int getMaxY() {
+        return limiter.getMaxY();
+    }
+    int getMinY() {
+        return limiter.getMinY();
     }
 }

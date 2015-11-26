@@ -15,26 +15,26 @@ import java.awt.image.BufferedImage;
  *
  * @author Kyle
  */
-public class Projectile extends Actor {
+public class Enemy extends Actor {
     
     private Velocity velocity;
     private Point position;
     private int size;
-    
-    public Projectile(BufferedImage image, Point position, int size, Velocity velocity) {
+
+    public Enemy(BufferedImage image, Point position, int size, Velocity velocity) {
         super(image, position, velocity);
         this.position = position;
         this.size = size;
         this.velocity = velocity;
+        
     }
     
     public void draw(Graphics graphics) {
-        graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size, size * 6, null);
+        graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size, size, null);
     }
     
-    public void projectileTimeTaskHandler() {
+    public void enemyTimeTaskHandler() {
         move();
-        
     }
     
     public int getX() {
@@ -48,4 +48,6 @@ public class Projectile extends Actor {
     int getSize() {
         return size;
     }
+    
+    
 }

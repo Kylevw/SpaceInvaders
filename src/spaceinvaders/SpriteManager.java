@@ -35,14 +35,18 @@ public class SpriteManager implements SpriteProviderIntf {
     public static String GREEN_METER = "GREEN_METER";
     public static String GREEN_METER_FILL = "GREEN_METER_FILL";
     public static String GREEN_METER_FLASH = "GREEN_METER_FLASH";
-
     
+    public static String YELLOW_ALIEN = "YELLOW_ALIEN";
+    
+    public static String MOTHER_SHIP = "MOTHER_SHIP";
+
     private ImageManager im;
     
     {
         
         HashMap<String, Image> imageMap = new HashMap<>();
         BufferedImage spriteSheet = (BufferedImage) ResourceTools.loadImageFromResource("spaceinvaders/spritesheet.png");
+        BufferedImage motherShip = (BufferedImage) ResourceTools.loadImageFromResource("spaceinvaders/mothership.png");
         imageMap.put(SHIP, spriteSheet.getSubimage(0, 112, 16, 16));
         imageMap.put(PROJECTILE, spriteSheet.getSubimage(0, 68, 1, 6));
         imageMap.put(GREEN_TINT, spriteSheet.getSubimage(40, 110, 18, 18));
@@ -60,7 +64,10 @@ public class SpriteManager implements SpriteProviderIntf {
         imageMap.put(GREEN_METER, spriteSheet.getSubimage(36, 98, 4, 6));
         imageMap.put(GREEN_METER_FILL, spriteSheet.getSubimage(44, 98, 4, 6));
         imageMap.put(GREEN_METER_FLASH, spriteSheet.getSubimage(40, 98, 4, 6));
+        imageMap.put(YELLOW_ALIEN, spriteSheet.getSubimage(0, 0, 16, 16));
         
+        imageMap.put(MOTHER_SHIP, motherShip.getSubimage(0, 0, 122, 47));
+
         im = new ImageManager(imageMap);
     }
     
