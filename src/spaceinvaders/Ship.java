@@ -9,6 +9,7 @@ import environment.Actor;
 import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
@@ -18,13 +19,15 @@ import java.awt.image.BufferedImage;
 public class Ship extends Actor {
     
     {
-        health = 1;
+        health = 16;
         energy = 16;
     }
     
     private Point position;
     private Velocity velocity;
     private int size;
+    private int width;
+    private int height;
     private int speed;
     
     private int invulTimer;
@@ -50,31 +53,38 @@ public class Ship extends Actor {
     
     public Ship(BufferedImage image, Point position, int size, Velocity velocity, int speed, MovementLimitProviderIntf limiter, SpriteProviderIntf imageProvider, AudioPlayerIntf audioPlayer) {
         
-        super(image, position, velocity);
+        super(image, position, velocity, new Point((image.getWidth() * size), (image.getHeight() * size)));
         this.limiter = limiter;
         this.position = position;
         this.size = size;
+        this.width = image.getWidth() * size;
+        this.height = image.getHeight() * size;
         this.speed = speed;
         this.imageProvider = imageProvider;
         this.audioPlayer = audioPlayer;
         
     }
     
+    @Override
+    public Rectangle getObjectBoundary() {
+        return new Rectangle(position.x + (size * 2), position.y, width - (size * 4), height);
+    }
+    
     public void draw(Graphics graphics) {
         
         if (powerUp == SPEED) {
-            graphics.drawImage(getImage(), ((int) position.getX() + (size / 4)), ((int) position.getY() + (size / 4)), size / 2, size / 2, null);
+            graphics.drawImage(getImage(), ((int) position.getX() + (size * 4)), ((int) position.getY() + (size * 4)), size * 8, size * 8, null);
         } else {
-            graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size, size, null);
+            graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size * 16, size * 16, null);
         }
         
         // draws power-up tints/overlays
         if (powerUp == RAPID_FIRE) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), (int) position.getX() - (size / 16), (int) position.getY() - (size / 16), size * 9 / 8, size * 9 / 8, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), (int) position.getX() - (size), (int) position.getY() - (size), size * 18, size * 18, null);
         } else if (powerUp == SHIELD) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), (int) position.getX() - (size / 4), (int) position.getY() - (3 * size / 16), size * 3 / 2, size * 3 / 2, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), (int) position.getX() - (size * 4), (int) position.getY() - (3 * size), size * 24, size * 24, null);
         } else if (powerUp == SPEED) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), (int) position.getX() + (size * 7 / 32), (int) position.getY() + (size * 7 / 32), size * 9 / 16, size * 9 / 16, null);
+            graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), (int) position.getX() + (size * 7 / 2), (int) position.getY() + (size * 7 / 2), size * 9, size * 9, null);
         }
     }
     
@@ -114,12 +124,6 @@ public class Ship extends Actor {
     
     void shipTimerTaskHandler() {
         
-        shipLimiter();
-        
-        if (position.getY() > getMinY() + 1) {
-            setVelocity(0, -1);
-        }
-        
         if (fireCooldown == 0) {
             if (energy <= 15) {
                 energy ++;
@@ -147,10 +151,15 @@ public class Ship extends Actor {
         }
         
         move();
-        
+        shipLimiter();
     }
     
     private void shipLimiter() {
+        
+        if (position.getY() > limiter.getMinY() + 1) {
+            setVelocity(0, -1);
+        }
+        
         if (limiter.getMinX() > getX()) {
             setPosition(limiter.getMinX(), getY());
         } else if (limiter.getMaxX() < getX()) {
@@ -202,5 +211,8 @@ public class Ship extends Actor {
     }
     int getMinY() {
         return limiter.getMinY();
+    }
+    void Damage(int damage) {
+        health -= damage;
     }
 }

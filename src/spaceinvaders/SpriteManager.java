@@ -37,6 +37,10 @@ public class SpriteManager implements SpriteProviderIntf {
     public static String GREEN_METER_FLASH = "GREEN_METER_FLASH";
     
     public static String YELLOW_ALIEN = "YELLOW_ALIEN";
+    public static String GREEN_ALIEN = "GREEN_ALIEN";
+    public static String PROJECTILE_SMALL_YELLOW = "PROJECTILE_SMALL_YELLOW";
+    public static String PROJECTILE_SMALL_GREEN = "PROJECTILE_SMALL_GREEN";
+    public static String PROJECTILE_MEDIUM_GREEN = "PROJECTILE_MEDIUM_GREEN";
     
     public static String MOTHER_SHIP = "MOTHER_SHIP";
 
@@ -49,6 +53,10 @@ public class SpriteManager implements SpriteProviderIntf {
         BufferedImage motherShip = (BufferedImage) ResourceTools.loadImageFromResource("spaceinvaders/mothership.png");
         imageMap.put(SHIP, spriteSheet.getSubimage(0, 112, 16, 16));
         imageMap.put(PROJECTILE, spriteSheet.getSubimage(0, 68, 1, 6));
+        imageMap.put(PROJECTILE_SMALL_YELLOW, spriteSheet.getSubimage(6, 34, 6, 6));
+        imageMap.put(PROJECTILE_SMALL_GREEN, spriteSheet.getSubimage(12, 34, 6, 6));
+        imageMap.put(PROJECTILE_MEDIUM_GREEN, spriteSheet.getSubimage(16, 26, 8, 8));
+
         imageMap.put(GREEN_TINT, spriteSheet.getSubimage(40, 110, 18, 18));
         imageMap.put(BLUE_TINT, spriteSheet.getSubimage(58, 110, 18, 18));
         imageMap.put(SHIELD, spriteSheet.getSubimage(16, 104, 24, 24));
@@ -65,6 +73,7 @@ public class SpriteManager implements SpriteProviderIntf {
         imageMap.put(GREEN_METER_FILL, spriteSheet.getSubimage(44, 98, 4, 6));
         imageMap.put(GREEN_METER_FLASH, spriteSheet.getSubimage(40, 98, 4, 6));
         imageMap.put(YELLOW_ALIEN, spriteSheet.getSubimage(0, 0, 16, 16));
+        imageMap.put(GREEN_ALIEN, spriteSheet.getSubimage(32, 0, 20, 16));
         
         imageMap.put(MOTHER_SHIP, motherShip.getSubimage(0, 0, 122, 47));
 
