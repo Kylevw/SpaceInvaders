@@ -11,7 +11,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -43,6 +42,7 @@ class SpaceEnvironment extends Environment {
     private boolean rightDebug;
     
     private int level;
+    private int difficulty;
     
     StatMeter healthMeter;
     StatMeter energyMeter;
@@ -67,6 +67,7 @@ class SpaceEnvironment extends Environment {
     public SpaceEnvironment() {
         
         level = 1;
+        difficulty = 0;
         
         loadImages();
         loadAudio();
@@ -84,7 +85,7 @@ class SpaceEnvironment extends Environment {
         enemies = new ArrayList<>();
         int starCount = 48; // number of stars on screen
         for (int i = 0; i < starCount; i++) {
-            stars.add(new Star(random(640), random(640), random(3)));
+              stars.add(new Star(random(640), random(640), random(3)));
         }
     }
     
@@ -111,7 +112,7 @@ class SpaceEnvironment extends Environment {
         
         // controls movement of the stars
         if (stars != null && !paused) {
-            yStarChange = ((level + 1) / 2) + 2;
+            yStarChange = difficulty + 3;
             
             stars.stream().forEach((theStar) -> {
             theStar.setY(yStarChange);
@@ -140,32 +141,54 @@ class SpaceEnvironment extends Environment {
         if (enemies != null && !paused) {
             alienTimer++;
             getEnemies().stream().map((enemy) -> {
-                if (random(100) == 1) {
+                if (random(800 / (difficulty + 4)) == 0) {
                     if (enemy.getType() == Enemy.MEDIUM) {
-                        projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_MEDIUM_GREEN), new Point(enemy.getX() + (5 * enemy.getSize()), enemy.getY() + (4 * enemy.getSize())), (enemy.getSize()), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 10.0), 2, false));
-                    } else {
-                        projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_SMALL_YELLOW), new Point(enemy.getX() + (5 * enemy.getSize()), enemy.getY() + (5 * enemy.getSize())), (enemy.getSize()), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 10.0), 1, false));
+                        projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_SMALL_GREEN), new Point(enemy.getX() + (7 * enemy.getSize()), enemy.getY() + (5 * enemy.getSize())), (enemy.getSize()), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 10.0 + (difficulty * 3)), 1, false, im));
+                    } else if (enemy.getType() == Enemy.LARGE) {
+                        projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_MEDIUM_BLUE), new Point(enemy.getX() + (7 * enemy.getSize()), enemy.getY() + (3 * enemy.getSize())), (enemy.getSize()), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 10.0 + (difficulty * 3)), 2, false, im));
+                    } else if (enemy.getType() == Enemy.SMALL) {
+                        projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_SMALL_YELLOW), new Point(enemy.getX() + (5 * enemy.getSize()), enemy.getY() + (5 * enemy.getSize())), (enemy.getSize()), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 10.0 + (difficulty * 3)), 1, false, im));
                     }
                 }
+                if (enemy.getY() >= enemy.getMaxY() && !enemy.targetingShip()) {
+                    enemy.targetShip();
+                } else if (enemy.targetingShip()) {
+                    enemy.setVelocity(TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 16.0));
+                    enemy.enemyTimeTaskHandler();
+                } else if (enemy.getY() >= enemy.getMinStartY() && !enemy.isCentering()) {
+                    enemy.center();
+                } else if (enemy.isCentering()) {
+                    enemy.setVelocity(0, 6);
+                    if (enemy.getY() >= enemy.getMinY()) {
+                        enemy.center();
+                        enemy.setVelocity(0, 0);
+                    }
+                    enemy.enemyTimeTaskHandler();
+                }
                 return enemy;
-            }).filter((enemy) -> (alienTimer >= 20)).forEach((enemy) -> {
-                if (timerTick <= 4) {
+            }).filter((enemy) -> (alienTimer >= 20 - (difficulty * 2) && !enemy.targetingShip())).forEach((enemy) -> {
+                if (timerTick <= 5) {
                     enemy.setVelocity(6, 0);
-                } else if (timerTick >= 6 && timerTick <= 10) {
+                } else if (timerTick >= 7 && timerTick <= 12) {
                     enemy.setVelocity(-6, 0);
                 } else {
                     enemy.setVelocity(0, 6);
                 }
+                if (timerTick == 1 || timerTick == 3 || timerTick == 5 || timerTick == 7 || timerTick == 9 || timerTick == 11 || timerTick == 13) {
+                    enemy.setFrame(1);
+                } else {
+                    enemy.setFrame(0);
+                }
                 enemy.enemyTimeTaskHandler();
             });
-            if (alienTimer >= 20) {
+            if (alienTimer >= 20 - (difficulty * 2)) {
                 alienTimer = 0;
                 timerTick++;
-                if (timerTick <= 5) {
+                if (timerTick <= 6) {
                     displacement += 6;
-                } else if (timerTick >= 7 && timerTick <= 11) {
+                } else if (timerTick >= 8 && timerTick <= 13) {
                     displacement -= 6;
-                } else if (timerTick >= 12) {
+                } else if (timerTick >= 14) {
                     timerTick = 0;
                 }
             }
@@ -225,13 +248,28 @@ class SpaceEnvironment extends Environment {
                 });
             });
             getProjectiles().stream().filter((projectile) -> (!projectile.isFriendly() && projectile.getObjectBoundary().intersects(ship.getObjectBoundary()))).map((projectile) -> {
-                if (ship.getPowerUp() != ship.SHIELD) {
+                if (ship.getPowerUp() != Ship.SHIELD) {
                     ship.Damage(projectile.getDamage());
                 }
                 return projectile;
             }).forEach((projectile) -> {
                 hitEnemy.add(projectile);
             });
+            for (Enemy enemy : enemies) {
+                if (enemy.getObjectBoundary().intersects(ship.getObjectBoundary())) {
+                    if (enemy.getType() == Enemy.LARGE) {
+                        ship.Damage(8);
+                    } else if (enemy.getType() == Enemy.MEDIUM) {
+                        ship.Damage(6);
+                    } else {
+                        ship.Damage(4);
+                    }
+                    noHealth.add(enemy);
+                    
+                    //TODO play sound on hit
+                    
+                }
+            }
             enemies.removeAll(noHealth);
             projectiles.removeAll(hitEnemy);
         }
@@ -242,14 +280,14 @@ class SpaceEnvironment extends Environment {
         
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             paused = !paused;
-        } else if (e.getKeyCode() == KeyEvent.VK_1) {
+        } else if (e.getKeyCode() == KeyEvent.VK_Q) {
             menuMusic = !menuMusic;
             if (menuMusic == true) {
                 am.playAudio(AudioManager.MENU, true);
             } else {
                 am.stopAudio(AudioManager.MENU);
             }
-        } else if (e.getKeyCode() == KeyEvent.VK_2) {
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
             gameMusic = !gameMusic;
             if (gameMusic == true) {
                 am.playAudio(AudioManager.GAME, true);
@@ -262,14 +300,14 @@ class SpaceEnvironment extends Environment {
                 if (ship != null) {
                     fire();
                 }
-            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT && !rightDebug) {
+            } else if (e.getKeyCode() == KeyEvent.VK_D && !rightDebug) {
                 // right movement for ship
                 if (ship != null) {
                     ship.accelerate(ship.getSpeed());
                 }
                 rightDebug = true;
                 
-            } else if (e.getKeyCode() == KeyEvent.VK_LEFT && !leftDebug) {
+            } else if (e.getKeyCode() == KeyEvent.VK_A && !leftDebug) {
                 if (ship != null) {
                     ship.accelerate(-ship.getSpeed());
                 }
@@ -289,17 +327,77 @@ class SpaceEnvironment extends Environment {
                 
             } else if (e.getKeyCode() == KeyEvent.VK_Y) {
                 // summons small alien row
-                summonAliens(42, -48, Enemy.SMALL, 8, 66, 3);
+                summonAliens(36, -48, Enemy.SMALL, 9, 60, 3);
             } else if (e.getKeyCode() == KeyEvent.VK_U) {
                 // summons medium alien row
-                summonAliens(42, -48, Enemy.MEDIUM, 6, 90, 3);
-            } else if (e.getKeyCode() == KeyEvent.VK_P && level < 10) {
+                summonAliens(36, -48, Enemy.MEDIUM, 7, 78, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_I) {
+                // summons large alien row
+                summonAliens(36, -48, Enemy.LARGE, 5, 114, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_1) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -102, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -156, Enemy.SMALL, 9, 60, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -102, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -156, Enemy.SMALL, 9, 60, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_3) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -102, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -156, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -210, Enemy.SMALL, 9, 60, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_4) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -102, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -156, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -210, Enemy.MEDIUM, 7, 78, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_5) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -102, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -156, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -210, Enemy.MEDIUM, 7, 78, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_6) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -102, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -156, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -210, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -262, Enemy.LARGE, 5, 114, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_7) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -102, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -156, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -210, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -262, Enemy.LARGE, 5, 114, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_8) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -102, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -156, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -210, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -262, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -316, Enemy.SMALL, 9, 60, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_9) {
+                // summons small alien row
+                summonAliens(36, -48, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -102, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -156, Enemy.SMALL, 9, 60, 3);
+                summonAliens(36, -210, Enemy.MEDIUM, 7, 78, 3);
+                summonAliens(36, -262, Enemy.LARGE, 5, 114, 3);
+                summonAliens(36, -316, Enemy.MEDIUM, 7, 78, 3);
+            } else if (e.getKeyCode() == KeyEvent.VK_P) {
                 // speeds up background
-                level = level + 2;
-                
-            } else if (e.getKeyCode() == KeyEvent.VK_O && level > 1) {
+                difficulty += 1;
+            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
                 // slows up background
-                level = level - 2;
+                difficulty -= 1;
             }
         }
     }
@@ -309,8 +407,8 @@ class SpaceEnvironment extends Environment {
                 if (0 < ship.getEnergy() || ship.getPowerUp() == Ship.RAPID_FIRE) {
                     // creates projectiles, removes 1 energy, resets cooldown
                     ship.fire();
-                    projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE), new Point(ship.getX() + (3 * ship.getSize()), ship.getY() + ship.getSize()), ship.getSize(), new Velocity(0, -36), 1, true));
-                    projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE), new Point(ship.getX() + (3 * ship.getSize() * 4), ship.getY() + ship.getSize()), ship.getSize(), new Velocity(0, -36), 1, true));
+                    projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE), new Point(ship.getX() + (3 * ship.getSize()), ship.getY() + ship.getSize()), ship.getSize(), new Velocity(0, -36), 1, true, im));
+                    projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE), new Point(ship.getX() + (3 * ship.getSize() * 4), ship.getY() + ship.getSize()), ship.getSize(), new Velocity(0, -36), 1, true, im));
                     if (ship.getEnergy() == 0 && ship.getPowerUp() != Ship.RAPID_FIRE) {
                         ship.setFireCooldown(80);
                     } else if (ship.getPowerUp() != Ship.RAPID_FIRE) {
@@ -325,26 +423,31 @@ class SpaceEnvironment extends Environment {
     }
     
     private void summonAliens(int x, int y, int type, int amount, int distance, int size){
-        System.out.println(displacement);
         if (type == Enemy.SMALL){
             for (int i = 0; i < amount; i++) {
-                enemies.add(new Enemy(im.getImage(SpriteManager.YELLOW_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 13, type));
+                enemies.add(new Enemy(im.getImage(SpriteManager.YELLOW_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 15 + (difficulty * 3), type, im, new EnemyMovementLimitProvider(-48, 18, 216)));
             }
         } else if (type == Enemy.MEDIUM){
             for (int i = 0; i < amount; i++) {
-                enemies.add(new Enemy(im.getImage(SpriteManager.GREEN_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 20, type));
+                enemies.add(new Enemy(im.getImage(SpriteManager.GREEN_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 24 + (difficulty * 4), type, im, new EnemyMovementLimitProvider(-48, 18, 216)));
             }
+        } else if (type == Enemy.LARGE){
+            for (int i = 0; i < amount; i++) {
+                enemies.add(new Enemy(im.getImage(SpriteManager.BLUE_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 38 + (difficulty * 6), type, im, new EnemyMovementLimitProvider(-48, 18, 216)));
+            }
+        } else {
+            System.out.println("ERROR summoning alien wave: Alien type not valid");
         }
     }
     
     @Override
     public void keyReleasedHandler(KeyEvent e) {
         // when releasing the right key, stops ship from moving right
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT && rightDebug) {
+        if (e.getKeyCode() == KeyEvent.VK_D && rightDebug) {
                 ship.accelerate(-ship.getSpeed(), 0);
                 rightDebug = false;
                 // when releasing the left key, stops ship from moving right
-        } else if ( e.getKeyCode() == KeyEvent.VK_LEFT && leftDebug) {
+        } else if ( e.getKeyCode() == KeyEvent.VK_A && leftDebug) {
                 ship.accelerate(ship.getSpeed(), 0);
                 leftDebug = false;
                 // allows the SPACE key to be pressed again after being released

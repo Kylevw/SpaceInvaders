@@ -5,16 +5,13 @@
  */
 package spaceinvaders;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
 /**
  *
  * @author Kyle
  */
-public interface SpriteProviderIntf {
-    
-    public BufferedImage getImage(String name);
-    public BufferedImage getAnimatedImage(String name);
+public interface EnemyMovementPaternIntf {
+    public int getMinStartY();
+    public int getMaxY();
+    public int getMinY();
     
 }

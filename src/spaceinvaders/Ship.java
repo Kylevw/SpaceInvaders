@@ -67,7 +67,11 @@ public class Ship extends Actor {
     
     @Override
     public Rectangle getObjectBoundary() {
+        if (powerUp == SPEED) {
+        return new Rectangle(position.x + (size * 4), position.y + (size * 4), width / 2 - (size * 2), height / 2);
+        } else {
         return new Rectangle(position.x + (size * 2), position.y, width - (size * 4), height);
+        }
     }
     
     public void draw(Graphics graphics) {
@@ -214,5 +218,12 @@ public class Ship extends Actor {
     }
     void Damage(int damage) {
         health -= damage;
+        healthRegen = -320;
+    }
+    int getWidth() {
+        return width;
+    }
+    int getHeight() {
+        return height;
     }
 }

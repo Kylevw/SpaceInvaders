@@ -27,8 +27,11 @@ public class Projectile extends Actor {
     private boolean isFriendly;
     private int width;
     private int height;
+    private int timer;
     
-    public Projectile(BufferedImage image, Point position, int size, Velocity velocity, int damage, boolean isFriendly) {
+    private final SpriteProviderIntf imageProvider;
+    
+    public Projectile(BufferedImage image, Point position, int size, Velocity velocity, int damage, boolean isFriendly, SpriteProviderIntf imageProvider) {
         super(image, position, velocity, new Point((image.getWidth() * 3), (image.getHeight() * 3)));
         this.position = position;
         this.size = size;
@@ -37,13 +40,30 @@ public class Projectile extends Actor {
         this.width = image.getWidth() * size;
         this.height = image.getHeight() * size;
         this.isFriendly = isFriendly;
+        this.imageProvider = imageProvider;
     }
     
     public void draw(Graphics graphics) {
-        graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), width, height, null);
+        if (!isFriendly && timer > 1) {
+            if (width == 10 * size) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.PROJECTILE_LARGE_WHITE), (int) position.getX(), (int) position.getY(), width, height, null);
+            } else if (width == 8 * size) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.PROJECTILE_MEDIUM_WHITE), (int) position.getX(), (int) position.getY(), width, height, null);
+            } else if (width == 6 * size) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.PROJECTILE_SMALL_WHITE), (int) position.getX(), (int) position.getY(), width, height, null);
+            } else {
+                graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), width, height, null);
+            }
+        } else {
+            graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), width, height, null);
+        }
     }
     
     public void projectileTimeTaskHandler() {
+        timer++;
+        if (timer >= 3) {
+            timer = 0;
+        }
         move();
     }
     
