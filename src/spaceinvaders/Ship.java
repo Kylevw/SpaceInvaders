@@ -31,6 +31,7 @@ public class Ship extends Actor {
     private int speed;
     
     private int invulTimer;
+    private boolean flash;
     private int meterTimer;
     private int healthRegen;
     private int health;
@@ -75,20 +76,21 @@ public class Ship extends Actor {
     }
     
     public void draw(Graphics graphics) {
-        
-        if (powerUp == SPEED) {
-            graphics.drawImage(getImage(), ((int) position.getX() + (size * 4)), ((int) position.getY() + (size * 4)), size * 8, size * 8, null);
-        } else {
-            graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size * 16, size * 16, null);
-        }
-        
-        // draws power-up tints/overlays
-        if (powerUp == RAPID_FIRE) {
+        if (!flash) {
+            if (powerUp == SPEED) {
+                graphics.drawImage(getImage(), ((int) position.getX() + (size * 4)), ((int) position.getY() + (size * 4)), size * 8, size * 8, null);
+            } else {
+                graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size * 16, size * 16, null);
+            }
+            
+            // draws power-up tints/overlays
+            if (powerUp == RAPID_FIRE) {
             graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_TINT), (int) position.getX() - (size), (int) position.getY() - (size), size * 18, size * 18, null);
-        } else if (powerUp == SHIELD) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), (int) position.getX() - (size * 4), (int) position.getY() - (3 * size), size * 24, size * 24, null);
-        } else if (powerUp == SPEED) {
-            graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), (int) position.getX() + (size * 7 / 2), (int) position.getY() + (size * 7 / 2), size * 9, size * 9, null);
+            } else if (powerUp == SHIELD) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.SHIELD), (int) position.getX() - (size * 4), (int) position.getY() - (3 * size), size * 24, size * 24, null);
+            } else if (powerUp == SPEED) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_TINT), (int) position.getX() + (size * 7 / 2), (int) position.getY() + (size * 7 / 2), size * 9, size * 9, null);
+            }
         }
     }
     
@@ -127,7 +129,14 @@ public class Ship extends Actor {
     }
     
     void shipTimerTaskHandler() {
-        
+        if (invulTimer > 0) {
+            invulTimer--;
+        }
+        if ((invulTimer + 3) / 6 == (invulTimer + 6) / 6) {
+            flash = true;
+        } else {
+            flash = false;
+        }
         if (fireCooldown == 0) {
             if (energy <= 15) {
                 energy ++;
@@ -186,6 +195,9 @@ public class Ship extends Actor {
     int getEnergy() {
         return energy;
     }
+    void removePowerUp() {
+        powerUpTimer = 0;
+    }
     boolean createPowerMeter() {
         return createMeter;
     }
@@ -217,9 +229,18 @@ public class Ship extends Actor {
         return limiter.getMinY();
     }
     void Damage(int damage) {
-        health -= damage;
-        healthRegen = -320;
+        if (invulTimer == 0 && powerUp != SHIELD) {
+            health -= damage;
+            healthRegen = -320;
+            audioPlayer.playAudio(AudioManager.HURT_SHIP, false);
+            invulTimer = 32;
+        }
     }
+    
+    void setInvulTimer(int invulTimer) {
+        this.invulTimer = invulTimer;
+    }
+    
     int getWidth() {
         return width;
     }

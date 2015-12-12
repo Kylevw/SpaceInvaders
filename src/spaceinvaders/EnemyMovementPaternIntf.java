@@ -13,5 +13,7 @@ public interface EnemyMovementPaternIntf {
     public int getMinStartY();
     public int getMaxY();
     public int getMinY();
+    public int getMinX();
+    public int getMaxX();
     
 }

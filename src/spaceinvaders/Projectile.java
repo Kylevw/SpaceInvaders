@@ -9,10 +9,7 @@ import environment.Actor;
 import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
@@ -61,7 +58,7 @@ public class Projectile extends Actor {
     
     public void projectileTimeTaskHandler() {
         timer++;
-        if (timer >= 3) {
+        if (timer >= 4) {
             timer = 0;
         }
         move();

@@ -11,13 +11,15 @@ package spaceinvaders;
  */
 public class EnemyMovementLimitProvider implements EnemyMovementPaternIntf {
     
-    public EnemyMovementLimitProvider(int minStartY, int minY, int maxY){
+    public EnemyMovementLimitProvider(int minStartY, int minY, int maxY, int minX, int maxX){
         this.minStartY = minStartY;
         this.minY = minY;
         this.maxY = maxY;
+        this.minX = minX;
+        this.maxX = maxX;
     }
     
-    int minStartY, minY, maxY;
+    int minStartY, minY, maxY, minX, maxX;
 
     @Override
     public int getMaxY() {
@@ -32,6 +34,16 @@ public class EnemyMovementLimitProvider implements EnemyMovementPaternIntf {
     @Override
     public int getMinStartY() {
         return minStartY;
+    }
+    
+    @Override
+    public int getMinX() {
+        return minX;
+    }
+    
+    @Override
+    public int getMaxX() {
+        return maxX;
     }
     
 }
