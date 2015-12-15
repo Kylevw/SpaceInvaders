@@ -162,6 +162,9 @@ public class Ship extends Actor {
             powerUp = 0;
             audioPlayer.playAudio(AudioManager.LOSE_POWER_UP, false);
         }
+        if (powerUp == SPEED) {
+            move();
+        }
         
         move();
         shipLimiter();

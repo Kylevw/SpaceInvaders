@@ -64,6 +64,7 @@ public class SpriteManager implements SpriteProviderIntf {
     public static String PROJECTILE_MEDIUM_WHITE = "PROJECTILE_MEDIUM_WHITE";
     public static String PROJECTILE_LARGE_WHITE = "PROJECTILE_LARGE_WHITE";
     
+    public static String LOGO = "LOGO";
     public static String MOTHERSHIP = "MOTHERSHIP";
     public static String MOTHERSHIP_BEAM = "MOTHERSHIP_BEAM";
 
@@ -78,6 +79,8 @@ public class SpriteManager implements SpriteProviderIntf {
         HashMap<String, Image> imageMap = new HashMap<>();
         BufferedImage spriteSheet = (BufferedImage) ResourceTools.loadImageFromResource("spaceinvaders/spritesheet.png");
         BufferedImage motherShip = (BufferedImage) ResourceTools.loadImageFromResource("spaceinvaders/mothership.png");
+        BufferedImage logo = (BufferedImage) ResourceTools.loadImageFromResource("spaceinvaders/logo.png");
+        imageMap.put(LOGO, logo.getSubimage(0, 0, 128, 128));
         imageMap.put(SHIP, spriteSheet.getSubimage(0, 112, 16, 16));
         imageMap.put(PROJECTILE, spriteSheet.getSubimage(0, 74, 1, 6));
         imageMap.put(PROJECTILE_SMALL_YELLOW, spriteSheet.getSubimage(6, 34, 6, 6));

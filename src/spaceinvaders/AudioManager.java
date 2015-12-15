@@ -25,6 +25,7 @@ public class AudioManager implements AudioPlayerIntf {
     public static String GAME = "GAME";
     public static String MENU = "MENU";
     public static String MOTHERSHIP = "MOTHERSHIP";
+    public static String MOTHERSHIP_WARNING = "MOTHERSHIP_WARNING";
     public static String POWER_UP = "POWER_UP";
     public static String LOSE_POWER_UP = "LOSE_POWER_UP";
     public static String HURT_ALIEN = "HURT_ALIEN";
@@ -36,6 +37,7 @@ public class AudioManager implements AudioPlayerIntf {
     {
         tracks.add(new Track(GAME, Source.RESOURCE, "/spaceinvaders/game.wav"));
         tracks.add(new Track(MOTHERSHIP, Source.RESOURCE, "/spaceinvaders/mothership.wav"));
+        tracks.add(new Track(MOTHERSHIP_WARNING, Source.RESOURCE, "/spaceinvaders/mothership_warning.wav"));
         tracks.add(new Track(FIRE, Source.RESOURCE, "/spaceinvaders/fire.wav"));
         tracks.add(new Track(MENU, Source.RESOURCE, "/spaceinvaders/menu.wav"));
         tracks.add(new Track(POWER_UP, Source.RESOURCE, "/spaceinvaders/powerup.wav"));

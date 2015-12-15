@@ -40,7 +40,9 @@ public class TextBox {
         if (rise) {
             y--;
         }
-        time++;
+        if (maxTime >= 0) {
+            time++;
+        }
     }
     
     public int getTime() {
