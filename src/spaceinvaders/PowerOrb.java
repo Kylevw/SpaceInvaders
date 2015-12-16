@@ -9,6 +9,7 @@ import environment.Actor;
 import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
@@ -39,6 +40,11 @@ public class PowerOrb extends Actor {
         this.height = image.getHeight() * size;
         this.type = type;
         this.imageProvider = imageProvider;
+    }
+    
+    @Override
+    public Rectangle getObjectBoundary() {
+        return new Rectangle(position.x - (2 * size), position.y - (2 * size), width - (4 * size), height - (4 * size));
     }
     
     public void draw(Graphics graphics) {

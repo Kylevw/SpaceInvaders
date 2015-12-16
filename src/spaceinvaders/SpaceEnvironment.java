@@ -38,8 +38,9 @@ class SpaceEnvironment extends Environment {
     private int direction;
     private int yStarChange;
     private boolean spacebarDebug;
-    private boolean isMenu;
     private boolean paused;
+    private int selectedButton;
+    
     
     private int alienTimer;
     private int timerTick;
@@ -50,6 +51,7 @@ class SpaceEnvironment extends Environment {
     private boolean rightDebug;
     
     private int menuState;
+    private boolean inGame;
     private int musicTimer;
     private int level;
     private int levelUpTimer;
@@ -86,7 +88,7 @@ class SpaceEnvironment extends Environment {
     
     public SpaceEnvironment() {
         
-        menuState = 1;
+        menuState = 4;
         difficulty = -1;
         
         loadImages();
@@ -182,6 +184,12 @@ class SpaceEnvironment extends Environment {
             textBoxTimer = 0;
         }
         
+        if (selectedButton < 0) {
+            selectedButton = 3;
+        } else if (selectedButton > 3) {
+            selectedButton = 0;
+        }
+        
         if (!paused) {
             // controls movement of the stars
             if (stars != null) {
@@ -265,7 +273,7 @@ class SpaceEnvironment extends Environment {
             
             if (musicTimer > 0) {
                     musicTimer++;
-                    if (musicTimer >= 320) {
+                    if (musicTimer >= 340) {
                         am.playAudio(AudioManager.MOTHERSHIP, true);
                         musicTimer = 0;
                     }
@@ -370,18 +378,18 @@ class SpaceEnvironment extends Environment {
                     noHealth.add(enemy);
                 } else if (enemy.getHealth() <= 0) {
                     if (enemy.getType() != Enemy.MOTHERSHIP) {
-                        textBoxs.add(new TextBox(enemy.getX() + (enemy.getWidth() * enemy.getSize() / 2) - 30, enemy.getY() + (enemy.getHeight() * enemy.getSize()) - 8, 40, true, spacefont_20, "" + (100 + (50 * enemy.getType()) + (25 * difficulty))));
+                        textBoxs.add(new TextBox(enemy.getX() + (enemy.getWidth() * enemy.getSize() / 2) - 30, enemy.getY() + (enemy.getHeight() * enemy.getSize()) - 8, 40, true, false, spacefont_20, "" + (100 + (50 * enemy.getType()) + (25 * difficulty))));
                         score += 100 + (enemy.getType() * 50) + (25 * difficulty);
                         noHealth.add(enemy);
                         am.playAudio(AudioManager.KILL_ALIEN, false);
                         int powerUpRandomizer = random(12);
                         if (powerUpRandomizer == 0) {
                             if (enemy.getType() == Enemy.LARGE) {
-                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_RAPID_FIRE), new Point(enemy.getX() + 18, enemy.getY() + 12), 4, new Velocity(0, 8), PowerOrb.RAPID_FIRE, im));
+                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_RAPID_FIRE), new Point(enemy.getX() + 12, enemy.getY()), 4, new Velocity(0, 8), PowerOrb.RAPID_FIRE, im));
                             } else if (enemy.getType() == Enemy.SMALL) {
-                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX() + 12, enemy.getY() + 12), 4, new Velocity(0, 8), PowerOrb.SHIELD, im));
+                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX(), enemy.getY()), 4, new Velocity(0, 8), PowerOrb.SHIELD, im));
                             } else if (enemy.getType() == Enemy.MEDIUM) {
-                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SPEED), new Point(enemy.getX() + 15, enemy.getY() + 12), 4, new Velocity(0, 8), PowerOrb.SPEED, im));
+                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SPEED), new Point(enemy.getX() + 6, enemy.getY()), 4, new Velocity(0, 8), PowerOrb.SPEED, im));
                             }
                         }
                     } else {
@@ -431,7 +439,7 @@ class SpaceEnvironment extends Environment {
                     enemy.enemyTimeTaskHandler();
                     if (enemy.getDeathTimer() >= 200) {
                         noHealth.add(enemy);
-                        textBoxs.add(new TextBox(enemy.getX() + (enemy.getWidth() * enemy.getSize() / 2) - 40, enemy.getY() + (enemy.getHeight() * enemy.getSize() / 2), 40, true, spacefont_20, "" + (5000 + (1000 * difficulty))));
+                        textBoxs.add(new TextBox(enemy.getX() + (enemy.getWidth() * enemy.getSize() / 2) - 40, enemy.getY() + (enemy.getHeight() * enemy.getSize() / 2), 40, true, false, spacefont_20, "" + (5000 + (1000 * difficulty))));
                         score += 5000 + (1500 * difficulty);
                     }
                 } else if (ship != null && enemy.getType() == Enemy.MOTHERSHIP && !enemy.isCentering()) {
@@ -457,7 +465,7 @@ class SpaceEnvironment extends Environment {
                             am.playAudio(AudioManager.MOTHERSHIP_EXPLODE, false);
                         } else if (random(4) == 0) {
                             enemy.setAttackTimer(-300);
-                            powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX() + ((enemy.getWidth() / 2 * enemy.getSize()) - 12), enemy.getY() + ((enemy.getHeight() / 2 * enemy.getSize()) - 12)), 4, new Velocity(0, 8), PowerOrb.SHIELD, im));
+                            powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX() + ((enemy.getWidth() / 2 * enemy.getSize()) - 20), enemy.getY() + ((enemy.getHeight() / 2 * enemy.getSize()) - 12)), 4, new Velocity(0, 8), PowerOrb.SHIELD, im));
                         } else {
                             enemy.setAttackTimer(-60);
                         }
@@ -506,16 +514,16 @@ class SpaceEnvironment extends Environment {
     
     private void stateLevel(){
         if (level % 10 == 0) {
-            textBoxs.add(new TextBox(208 - (((((difficulty + 9) / 10) * 10 + level) / 10) * 16), 300, 320, false, spacefont_32, "LEVEL " + (level + (10 * difficulty))));
+            textBoxs.add(new TextBox(208 - (((((difficulty + 9) / 10) * 10 + level) / 10) * 16), 300, 320, false, true, spacefont_32, "LEVEL " + (level + (10 * difficulty))));
         } else {
-            textBoxs.add(new TextBox(208 - (((((difficulty + 9) / 10) * 10 + level) / 10) * 16), 300, 120, false, spacefont_32, "LEVEL " + (level + (10 * difficulty))));
+            textBoxs.add(new TextBox(208 - (((((difficulty + 9) / 10) * 10 + level) / 10) * 16), 300, 120, false, false, spacefont_32, "LEVEL " + (level + (10 * difficulty))));
         }
     }
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
         
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if (menuState == 0 && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             paused = !paused;
         } else if (ship != null && menuState == 0 && !paused && ship.getY() == ship.getMinY()) {
             
@@ -592,13 +600,36 @@ class SpaceEnvironment extends Environment {
                 // slows up background
                 difficulty -= 1;
             }
-        } else if (menuState == 3) {
-            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                enemies.removeAll(enemies);
-                menuState = 1;
+        } else if (menuState == 0 && paused) {
+            if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (selectedButton == 0) {
+                    paused = false;
+                } else if (selectedButton == 3) {
+                    inGame = false;
+                    stopMusic();
+                    ship = null;
+                    enemies.removeAll(enemies);
+                    difficulty = -1;
+                    menuState = 4;
+                    paused = false;
+                    selectedButton = 0;
+                    am.playAudio(AudioManager.MENU, true);
+                    
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
+                selectedButton++;
+            } else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
+                selectedButton--;
             }
-        } else if (menuState == 1) {
-            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+        } else if (menuState == 3) {
+            if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+                enemies.removeAll(enemies);
+                inGame = false;
+                menuState = 4;
+            }
+        } else if (menuState == 4) {
+            if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+                inGame = true;
                 level = 0;
                 difficulty = 0;
                 levelUpTimer = -140;
@@ -622,7 +653,6 @@ class SpaceEnvironment extends Environment {
                     } else if (ship.getPowerUp() != Ship.RAPID_FIRE) {
                         ship.setFireCooldown(40);
                     }
-                    
                     // otherwise, resets the cooldown if no energy is present
                 } else if (ship.getEnergy() == 0 && ship.getPowerUp() != Ship.RAPID_FIRE) {
                     ship.setFireCooldown(80);
@@ -786,12 +816,12 @@ class SpaceEnvironment extends Environment {
             graphics.drawString(String.format("Level:%02d%n", (difficulty * 10) + level), 445, 28);
         }
         
-        if (menuState == 3 || paused) {
+        if (paused || menuState > 0 && menuState < 4 && inGame == true) {
             graphics.setColor(new Color(0, 0, 0, 124));
             graphics.fillRect(0, 0, 640, 640);
         }
         
-        if (menuState == 1) {
+        if (menuState == 4) {
             graphics.drawImage(im.getImage(SpriteManager.LOGO), 64, 8, 512, 512, this);
             graphics.setFont(spacefont_32);
             graphics.setColor(new Color(0, 0, 0, 63));
@@ -807,6 +837,17 @@ class SpaceEnvironment extends Environment {
                 graphics.setFont(spacefont_12);
                 graphics.drawString("(Press SPACE)", 242, 530);
             }
+        } else if (paused) {
+            graphics.setColor(Color.WHITE);
+            graphics.setFont(spacefont_32);
+            graphics.drawString("PAUSED", 224, 120);
+            graphics.setFont(spacefont_20);
+            graphics.drawString(">            <", 179, 250 + selectedButton * 40);
+            graphics.drawString("Resume Game", 210, 250);
+            graphics.drawString("Quit Game", 230, 370);
+            graphics.setColor(new Color(128, 128, 128));
+            graphics.drawString("High Scores", 210, 290);
+            graphics.drawString("How To Play", 210, 330);
         } else if (menuState == 3) {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_32);
@@ -817,10 +858,6 @@ class SpaceEnvironment extends Environment {
             if (textBoxTimer <= 60) {
                 graphics.drawString(String.format("Press SPACE to continue", level), 90, 400);
             }
-        } else if (paused) {
-            graphics.setColor(Color.WHITE);
-            graphics.setFont(spacefont_32);
-            graphics.drawString("PAUSED", 218, 100);
         }
     }
 }
