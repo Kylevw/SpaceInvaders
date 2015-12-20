@@ -82,7 +82,7 @@ public class SpriteManager implements SpriteProviderIntf {
         BufferedImage logo = (BufferedImage) ResourceTools.loadImageFromResource("spaceinvaders/logo.png");
         imageMap.put(LOGO, logo.getSubimage(0, 0, 128, 128));
         imageMap.put(SHIP, spriteSheet.getSubimage(0, 112, 16, 16));
-        imageMap.put(PROJECTILE, spriteSheet.getSubimage(0, 62, 1, 6));
+        imageMap.put(PROJECTILE, spriteSheet.getSubimage(0, 58, 1, 6));
         imageMap.put(PROJECTILE_SMALL_YELLOW, spriteSheet.getSubimage(6, 34, 6, 6));
         imageMap.put(PROJECTILE_LARGE_YELLOW, spriteSheet.getSubimage(10, 16, 10, 10));
         imageMap.put(PROJECTILE_SMALL_GREEN, spriteSheet.getSubimage(12, 34, 6, 6));
@@ -93,14 +93,14 @@ public class SpriteManager implements SpriteProviderIntf {
         imageMap.put(PROJECTILE_MEDIUM_WHITE, spriteSheet.getSubimage(0, 26, 8, 8));
         imageMap.put(PROJECTILE_LARGE_WHITE, spriteSheet.getSubimage(0, 16, 10, 10));
         
-        imageMap.put(POWERUP_RAPID_FIRE, spriteSheet.getSubimage(20, 76, 10, 10));
-        imageMap.put(POWERUP_RAPID_FIRE_SMALL, spriteSheet.getSubimage(16, 68, 8, 8));
+        imageMap.put(POWERUP_RAPID_FIRE, spriteSheet.getSubimage(24, 74, 12, 12));
+        imageMap.put(POWERUP_RAPID_FIRE_SMALL, spriteSheet.getSubimage(24, 62, 12, 12));
         imageMap.put(POWERUP_RAPID_FIRE_LARGE, spriteSheet.getSubimage(24, 86, 12, 12));
-        imageMap.put(POWERUP_SHIELD, spriteSheet.getSubimage(0, 76, 10, 10));
-        imageMap.put(POWERUP_SHIELD_SMALL, spriteSheet.getSubimage(0, 68, 8, 8));
+        imageMap.put(POWERUP_SHIELD, spriteSheet.getSubimage(0, 74, 12, 12));
+        imageMap.put(POWERUP_SHIELD_SMALL, spriteSheet.getSubimage(0, 62, 12, 12));
         imageMap.put(POWERUP_SHIELD_LARGE, spriteSheet.getSubimage(0, 86, 12, 12));
-        imageMap.put(POWERUP_SPEED, spriteSheet.getSubimage(10, 76, 10, 10));
-        imageMap.put(POWERUP_SPEED_SMALL, spriteSheet.getSubimage(8, 68, 8, 8));
+        imageMap.put(POWERUP_SPEED, spriteSheet.getSubimage(12, 74, 12, 12));
+        imageMap.put(POWERUP_SPEED_SMALL, spriteSheet.getSubimage(12, 62, 12, 12));
         imageMap.put(POWERUP_SPEED_LARGE, spriteSheet.getSubimage(12, 86, 12, 12));
         
         imageMap.put(GREEN_TINT, spriteSheet.getSubimage(40, 110, 18, 18));
@@ -136,10 +136,5 @@ public class SpriteManager implements SpriteProviderIntf {
     @Override
     public BufferedImage getImage(String name){
         return (BufferedImage) im.getImage(name);
-    }
-    
-    @Override
-    public BufferedImage getAnimatedImage(String name){
-        return (BufferedImage) iam.getCurrentImage();
     }
 }

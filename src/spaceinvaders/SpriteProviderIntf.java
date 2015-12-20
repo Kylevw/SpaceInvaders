@@ -15,6 +15,5 @@ import java.awt.image.BufferedImage;
 public interface SpriteProviderIntf {
     
     public BufferedImage getImage(String name);
-    public BufferedImage getAnimatedImage(String name);
     
 }

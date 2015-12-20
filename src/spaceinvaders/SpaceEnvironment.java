@@ -14,11 +14,17 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import path.TrigonometryCalculator;
 
 /**
@@ -41,7 +47,6 @@ class SpaceEnvironment extends Environment {
     private boolean paused;
     private int selectedButton;
     
-    
     private int alienTimer;
     private int timerTick;
     private int textBoxTimer;
@@ -51,12 +56,13 @@ class SpaceEnvironment extends Environment {
     private boolean rightDebug;
     
     private int menuState;
-    private boolean inGame;
     private int musicTimer;
     private int level;
     private int levelUpTimer;
     private int difficulty;
     private int score;
+    private int highScore;
+    private boolean newHighScore;
     
     StatMeter healthMeter;
     StatMeter energyMeter;
@@ -90,6 +96,8 @@ class SpaceEnvironment extends Environment {
         
         menuState = 4;
         difficulty = -1;
+        
+        highScore = -1;
         
         loadImages();
         loadAudio();
@@ -150,6 +158,8 @@ class SpaceEnvironment extends Environment {
     @Override
     public void timerTaskHandler() {
         
+        highScore = getHighScore();
+        
         if (ship == null) {
             if (healthMeter != null) {
                 healthMeter = null;
@@ -161,6 +171,8 @@ class SpaceEnvironment extends Environment {
             if (ship.getHealth() <= 0) {
                 ship = null;
                 menuState = 3;
+                checkScore();
+                textBoxs.removeAll(textBoxs);
                 ArrayList<Enemy> aboveScreen = new ArrayList<>();
                 getEnemies().stream().filter((enemy) -> (enemy.getY() <= -enemy.getWidth() * enemy.getSize())).forEach((enemy) -> {
                     aboveScreen.add(enemy);
@@ -184,9 +196,13 @@ class SpaceEnvironment extends Environment {
             textBoxTimer = 0;
         }
         
+        if (score > 999999999) {
+            score = 999999999;
+        }
+        
         if (selectedButton < 0) {
-            selectedButton = 3;
-        } else if (selectedButton > 3) {
+            selectedButton = 2;
+        } else if (selectedButton > 2) {
             selectedButton = 0;
         }
         
@@ -310,6 +326,58 @@ class SpaceEnvironment extends Environment {
         }
     }
     
+    public int getHighScore() {
+        FileReader readFile = null;
+        BufferedReader reader = null;
+        try {
+            readFile = new FileReader("src/spaceinvaders/highscore.dat");
+            reader = new BufferedReader(readFile);
+            return Integer.valueOf(reader.readLine());
+        } catch (Exception e){
+            return 0;
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(SpaceEnvironment.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    
+    private void checkScore() {
+        if (score > highScore) {
+            newHighScore = true;
+            File scoreFile = new File("src/spaceinvaders/highscore.dat");
+            if (!scoreFile.exists()) {
+                try {
+                    scoreFile.createNewFile();
+                } catch (IOException ex) {
+                    Logger.getLogger(SpaceEnvironment.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            FileWriter writeFile = null;
+            BufferedWriter writer = null;
+            try {
+                writeFile = new FileWriter(scoreFile);
+                writer = new BufferedWriter(writeFile);
+                writer.write("" + score);
+            } catch (IOException ex) {
+                Logger.getLogger(SpaceEnvironment.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(SpaceEnvironment.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+    }
+    
     private void checkHitStatus(){
         if (enemies != null && projectiles != null) {
             ArrayList<Enemy> noHealth = new ArrayList<>();
@@ -385,11 +453,11 @@ class SpaceEnvironment extends Environment {
                         int powerUpRandomizer = random(12);
                         if (powerUpRandomizer == 0) {
                             if (enemy.getType() == Enemy.LARGE) {
-                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_RAPID_FIRE), new Point(enemy.getX() + 12, enemy.getY()), 4, new Velocity(0, 8), PowerOrb.RAPID_FIRE, im));
+                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_RAPID_FIRE), new Point(enemy.getX() + 18, enemy.getY()), 3, new Velocity(0, 8), PowerOrb.RAPID_FIRE, im));
                             } else if (enemy.getType() == Enemy.SMALL) {
-                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX(), enemy.getY()), 4, new Velocity(0, 8), PowerOrb.SHIELD, im));
+                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX() + 6, enemy.getY()), 3, new Velocity(0, 8), PowerOrb.SHIELD, im));
                             } else if (enemy.getType() == Enemy.MEDIUM) {
-                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SPEED), new Point(enemy.getX() + 6, enemy.getY()), 4, new Velocity(0, 8), PowerOrb.SPEED, im));
+                                powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SPEED), new Point(enemy.getX() + 12, enemy.getY()), 3, new Velocity(0, 8), PowerOrb.SPEED, im));
                             }
                         }
                     } else {
@@ -465,7 +533,7 @@ class SpaceEnvironment extends Environment {
                             am.playAudio(AudioManager.MOTHERSHIP_EXPLODE, false);
                         } else if (random(4) == 0) {
                             enemy.setAttackTimer(-300);
-                            powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX() + ((enemy.getWidth() / 2 * enemy.getSize()) - 20), enemy.getY() + ((enemy.getHeight() / 2 * enemy.getSize()) - 12)), 4, new Velocity(0, 8), PowerOrb.SHIELD, im));
+                            powerOrbs.add(new PowerOrb(im.getImage(SpriteManager.POWERUP_SHIELD), new Point(enemy.getX() + ((enemy.getWidth() / 2 * enemy.getSize()) - 18), enemy.getY() + ((enemy.getHeight() / 2 * enemy.getSize()) - 12)), 3, new Velocity(0, 8), PowerOrb.SHIELD, im));
                         } else {
                             enemy.setAttackTimer(-60);
                         }
@@ -514,7 +582,7 @@ class SpaceEnvironment extends Environment {
     
     private void stateLevel(){
         if (level % 10 == 0) {
-            textBoxs.add(new TextBox(208 - (((((difficulty + 9) / 10) * 10 + level) / 10) * 16), 300, 320, false, true, spacefont_32, "LEVEL " + (level + (10 * difficulty))));
+            textBoxs.add(new TextBox(208 - (((difficulty + 10) / 10) * 16), 300, 320, false, true, spacefont_32, "LEVEL " + (level + (10 * difficulty))));
         } else {
             textBoxs.add(new TextBox(208 - (((((difficulty + 9) / 10) * 10 + level) / 10) * 16), 300, 120, false, false, spacefont_32, "LEVEL " + (level + (10 * difficulty))));
         }
@@ -604,13 +672,18 @@ class SpaceEnvironment extends Environment {
             if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
                 if (selectedButton == 0) {
                     paused = false;
-                } else if (selectedButton == 3) {
-                    inGame = false;
+                } else if (selectedButton == 1) {
+                    menuState = 1;
+                } else if (selectedButton == 2) {
+                    projectiles.removeAll(projectiles);
                     stopMusic();
                     ship = null;
                     enemies.removeAll(enemies);
                     difficulty = -1;
                     menuState = 4;
+                    score = 0;
+                    textBoxs.removeAll(textBoxs);
+                    musicTimer = 0;
                     paused = false;
                     selectedButton = 0;
                     am.playAudio(AudioManager.MENU, true);
@@ -622,21 +695,29 @@ class SpaceEnvironment extends Environment {
                 selectedButton--;
             }
         } else if (menuState == 3) {
-            if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                newHighScore = false;
                 enemies.removeAll(enemies);
-                inGame = false;
+                score = 0;
+                musicTimer = 0;
                 menuState = 4;
             }
         } else if (menuState == 4) {
             if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
-                inGame = true;
                 level = 0;
                 difficulty = 0;
                 levelUpTimer = -140;
                 menuState = 0;
                 ship = new Ship(im.getImage(SpriteManager.SHIP), new Point(296, 640), 3, new Velocity(0, 0), 9, new ShipMovementLimitProvider(24, 568, 505, 640), im, am);
+                textBoxs.add(new TextBox(68, 280, 220, false, false, spacefont_24, "A+D: Move Left/Right"));
+                textBoxs.add(new TextBox(164, 310, 220, false, false, spacefont_24, "SPACE: Shoot"));
+                textBoxs.add(new TextBox(128, 340, 220, false, false, spacefont_24, "ESC: Pause Game"));
                 stopMusic();
                 am.playAudio(AudioManager.GAME, true);
+            }
+        } else if (menuState == 1) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                menuState = 0;
             }
         }
     }
@@ -812,12 +893,16 @@ class SpaceEnvironment extends Environment {
         if (menuState == 0) {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_24);
-            graphics.drawString(String.format("Score:%010d%n", score), 3, 28);
+            graphics.drawString(String.format("Score:%09d%n", score), 3, 28);
             graphics.drawString(String.format("Level:%02d%n", (difficulty * 10) + level), 445, 28);
         }
         
-        if (paused || menuState > 0 && menuState < 4 && inGame == true) {
-            graphics.setColor(new Color(0, 0, 0, 124));
+        if (paused || menuState > 0) {
+            if (menuState == 1) {
+                graphics.setColor(new Color(0, 0, 0, 200));
+            } else {
+                graphics.setColor(new Color(0, 0, 0, 124));
+            }
             graphics.fillRect(0, 0, 640, 640);
         }
         
@@ -831,32 +916,75 @@ class SpaceEnvironment extends Environment {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_12);
             graphics.drawString("Kyle van Wiltenburg - 2015", 4, 608);
+            graphics.setFont(spacefont_24);
+            graphics.drawString(String.format("HIGH:%09d%n", highScore), 3, 28);
             if (textBoxTimer <= 60) {
                 graphics.setFont(spacefont_24);
                 graphics.drawString("- Insert Coin(s) -", 104, 500);
                 graphics.setFont(spacefont_12);
                 graphics.drawString("(Press SPACE)", 242, 530);
             }
+        } else if (menuState == 1) {
+            graphics.setColor(Color.WHITE);
+            graphics.setFont(spacefont_32);
+            graphics.drawString("HOW TO PLAY", 144, 72);
+            graphics.setFont(spacefont_12);
+            graphics.drawString("Aliens are descending towards your ship! Fire at", 6, 120);
+            graphics.drawString("them by pressing SPACE, and dodge their attacks by", 6, 135);
+            graphics.drawString("moving left + right. Your health is", 6, 150);
+            graphics.drawString("displayed by the red meter, and your", 6, 165);
+            graphics.drawString("ammunition by the blue meter. If your", 6, 180);
+            graphics.drawString("health depletes to 0, you lose the game. Also, your", 6, 195);
+            graphics.drawString("ammunition has a cooldown before it reloads, meaning", 6, 210);
+            graphics.drawString("you must wait before hitting the spacebar again for", 6, 225);
+            graphics.drawString("it to recharge.", 6, 240);
+            graphics.drawString("Upon the death of an alien, you will be rewarded", 6, 270);
+            graphics.drawString("points, along with the possibilty of a", 6, 285);
+            graphics.drawString("power-up. A power-up can be collected by", 6, 300);
+            graphics.drawString("running into the pulsing orb with your", 6, 315);
+            graphics.drawString("ship. Upon picking up a power-up, a timer will", 6, 330);
+            graphics.drawString("appear on the bottom-left of the screen, indicating", 6, 345);
+            graphics.drawString("how long the power-up has left before depleting.", 6, 360);
+            graphics.drawString("You will complete the level by clearing out each", 6, 390);
+            graphics.drawString("wave of aliens in the level, each getting faster and", 6, 405);
+            graphics.drawString("stronger as you progress. See how long you can", 6, 420);
+            graphics.drawString("survive before the aliens destroy you and your ship!", 6, 435);
+            graphics.drawString("Press ESCAPE to return to menu", 140, 560);
+            
+            graphics.drawImage(im.getImage(SpriteManager.YELLOW_ALIEN), 136, 470, 48, 48, this);
+            graphics.drawImage(im.getImage(SpriteManager.GREEN_ALIEN), 290, 470, 60, 48, this);
+            graphics.drawImage(im.getImage(SpriteManager.BLUE_ALIEN), 444, 470, 72, 48, this);
+            graphics.drawImage(im.getImage(SpriteManager.POWERUP_SHIELD_LARGE), 500, 278, 36, 36, this);
+            graphics.drawImage(im.getImage(SpriteManager.POWERUP_SPEED_LARGE), 542, 278, 36, 36, this);
+            graphics.drawImage(im.getImage(SpriteManager.POWERUP_RAPID_FIRE_LARGE), 584, 278, 36, 36, this);
+            for (int i = 0; i < 16; i++) {
+                graphics.drawImage(im.getImage(SpriteManager.RED_METER), 460 + (9 * i), 140, 12, 18, this);
+                graphics.drawImage(im.getImage(SpriteManager.RED_METER_FILL), 460 + (9 * i), 140, 12, 18, this);
+                graphics.drawImage(im.getImage(SpriteManager.BLUE_METER), 460 + (9 * i), 161, 12, 18, this);
+                graphics.drawImage(im.getImage(SpriteManager.BLUE_METER_FILL), 460 + (9 * i), 161, 12, 18, this);
+            }
         } else if (paused) {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_32);
             graphics.drawString("PAUSED", 224, 120);
             graphics.setFont(spacefont_20);
-            graphics.drawString(">            <", 179, 250 + selectedButton * 40);
-            graphics.drawString("Resume Game", 210, 250);
-            graphics.drawString("Quit Game", 230, 370);
-            graphics.setColor(new Color(128, 128, 128));
-            graphics.drawString("High Scores", 210, 290);
-            graphics.drawString("How To Play", 210, 330);
+            graphics.drawString(">            <", 179, 270 + selectedButton * 40);
+            graphics.drawString("Resume Game", 210, 270);
+            graphics.drawString("How To Play", 210, 310);
+            graphics.drawString("Quit Game", 230, 350);
+            graphics.drawString(String.format("Highscore:%09d%n", highScore), 130, 160);
         } else if (menuState == 3) {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_32);
             graphics.drawString("GAME OVER", 176, 100);
+            if (newHighScore) {
+                graphics.drawString("NEW HIGHSCORE!", 96, 306);
+            }
             graphics.setFont(spacefont_20);
-            graphics.drawString(String.format("Final Score: %010d%n", score), 90, 140);
+            graphics.drawString(String.format("Final Score: %09d%n", score), 90, 140);
             graphics.drawString(String.format("Died On Level: %02d%n", level), 150, 170);
             if (textBoxTimer <= 60) {
-                graphics.drawString(String.format("Press SPACE to continue", level), 90, 400);
+                graphics.drawString(String.format("Press ENTER to continue", level), 90, 450);
             }
         }
     }
