@@ -330,7 +330,7 @@ class SpaceEnvironment extends Environment {
         FileReader readFile = null;
         BufferedReader reader = null;
         try {
-            readFile = new FileReader("src/spaceinvaders/highscore.dat");
+            readFile = new FileReader("highscore.dat");
             reader = new BufferedReader(readFile);
             return Integer.valueOf(reader.readLine());
         } catch (Exception e){
@@ -350,7 +350,7 @@ class SpaceEnvironment extends Environment {
     private void checkScore() {
         if (score > highScore) {
             newHighScore = true;
-            File scoreFile = new File("src/spaceinvaders/highscore.dat");
+            File scoreFile = new File("highscore.dat");
             if (!scoreFile.exists()) {
                 try {
                     scoreFile.createNewFile();
@@ -611,62 +611,62 @@ class SpaceEnvironment extends Environment {
                     ship.accelerate(-ship.getSpeed());
                 }
                 leftDebug = true;
-            } else if (e.getKeyCode() == KeyEvent.VK_1) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 0;
-            } else if (e.getKeyCode() == KeyEvent.VK_2) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 1;
-            } else if (e.getKeyCode() == KeyEvent.VK_3) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 2;
-            } else if (e.getKeyCode() == KeyEvent.VK_4) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 3;
-            } else if (e.getKeyCode() == KeyEvent.VK_5) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 4;
-            } else if (e.getKeyCode() == KeyEvent.VK_6) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 5;
-            } else if (e.getKeyCode() == KeyEvent.VK_7) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 6;
-            } else if (e.getKeyCode() == KeyEvent.VK_8) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 7;
-            } else if (e.getKeyCode() == KeyEvent.VK_9) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 8;
-            } else if (e.getKeyCode() == KeyEvent.VK_0) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 9;
-            } else if (e.getKeyCode() == KeyEvent.VK_P) {
-                // speeds up background
-                difficulty += 1;
-            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
-                // slows up background
-                difficulty -= 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_1) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 0;
+//            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_3) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 2;
+//            } else if (e.getKeyCode() == KeyEvent.VK_4) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 3;
+//            } else if (e.getKeyCode() == KeyEvent.VK_5) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 4;
+//            } else if (e.getKeyCode() == KeyEvent.VK_6) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 5;
+//            } else if (e.getKeyCode() == KeyEvent.VK_7) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 6;
+//            } else if (e.getKeyCode() == KeyEvent.VK_8) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 7;
+//            } else if (e.getKeyCode() == KeyEvent.VK_9) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 8;
+//            } else if (e.getKeyCode() == KeyEvent.VK_0) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 9;
+//            } else if (e.getKeyCode() == KeyEvent.VK_P) {
+//                // speeds up background
+//                difficulty += 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
+//                // slows up background
+//                difficulty -= 1;
             }
         } else if (menuState == 0 && paused) {
             if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {

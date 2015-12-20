@@ -5,7 +5,7 @@
  */
 package spaceinvaders;
 
-import com.apple.eawt.Application;
+//import com.apple.eawt.Application;
 import environment.ApplicationStarter;
 import images.ResourceTools;
 import java.awt.Dimension;
@@ -24,8 +24,8 @@ public class SpaceInvaders {
     }
 
     private static void startUp() {
-        Application application = Application.getApplication();
-        application.setDockIconImage(ResourceTools.loadImageFromResource("spaceinvaders/icon.png"));
+//        Application application = Application.getApplication();
+//        application.setDockIconImage(ResourceTools.loadImageFromResource("spaceinvaders/icon.png"));
         ApplicationStarter.run("Space Invaders... Kinda", new Dimension(640, 640), new SpaceEnvironment(), ResourceTools.loadImageFromResource("spaceinvaders/icon.png"));
     }
 }
