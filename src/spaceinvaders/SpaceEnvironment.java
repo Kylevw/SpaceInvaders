@@ -46,6 +46,7 @@ class SpaceEnvironment extends Environment {
     private boolean spacebarDebug;
     private boolean paused;
     private int selectedButton;
+    private int cheatProgress;
     
     private int alienTimer;
     private int timerTick;
@@ -279,9 +280,12 @@ class SpaceEnvironment extends Environment {
                         musicTimer = 1;
                     }
                     if (level > 10) {
+                        am.playAudio(AudioManager.LEVEL_UP, false);
                         difficulty++;
                         level = 1;
                     }
+                    alienTimer = 0;
+                    timerTick = 0;
                     summonAlienWave();
                     stateLevel();
                 }
@@ -591,9 +595,66 @@ class SpaceEnvironment extends Environment {
     @Override
     public void keyPressedHandler(KeyEvent e) {
         
-        if (menuState == 0 && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            paused = !paused;
-        } else if (ship != null && menuState == 0 && !paused && ship.getY() == ship.getMinY()) {
+        if (menuState == 0) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                paused = !paused;
+            } else if (!paused && level == 0) {
+                if (e.getKeyCode() == KeyEvent.VK_M) {
+                    cheatProgress = 1;
+                } else if (e.getKeyCode() == KeyEvent.VK_O) {
+                    if (cheatProgress == 1) {
+                        cheatProgress++;
+                    } else {
+                        cheatProgress = 0;
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_T) {
+                    if (cheatProgress == 2) {
+                        cheatProgress++;
+                    } else {
+                        cheatProgress = 0;
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_H) {
+                    if (cheatProgress == 3 || cheatProgress == 7) {
+                        cheatProgress++;
+                    } else {
+                        cheatProgress = 0;
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_E) {
+                    if (cheatProgress == 4) {
+                        cheatProgress++;
+                    } else {
+                        cheatProgress = 0;
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_R) {
+                    if (cheatProgress == 5) {
+                        cheatProgress++;
+                    } else {
+                        cheatProgress = 0;
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_S) {
+                    if (cheatProgress == 6) {
+                        cheatProgress++;
+                    } else {
+                        cheatProgress = 0;
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_I) {
+                    if (cheatProgress == 8) {
+                        cheatProgress++;
+                    } else {
+                        cheatProgress = 0;
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_P) {
+                    if (cheatProgress == 9) {
+                        level = 10;
+                        score = 45000;
+                        am.playAudio(AudioManager.POWER_UP, false);
+                    }
+                    cheatProgress = 0;
+                }
+            }
+        }
+        
+        if (ship != null && menuState == 0 && !paused && ship.getY() == ship.getMinY()) {
             
             if (e.getKeyCode() == KeyEvent.VK_SPACE && !spacebarDebug) {
                 if (ship != null) {
@@ -678,6 +739,7 @@ class SpaceEnvironment extends Environment {
                     projectiles.removeAll(projectiles);
                     stopMusic();
                     ship = null;
+                    checkScore();
                     enemies.removeAll(enemies);
                     difficulty = -1;
                     menuState = 4;
@@ -932,8 +994,8 @@ class SpaceEnvironment extends Environment {
             graphics.drawString("Aliens are descending towards your ship! Fire at", 6, 120);
             graphics.drawString("them by pressing SPACE, and dodge their attacks by", 6, 135);
             graphics.drawString("moving left + right. Your health is", 6, 150);
-            graphics.drawString("displayed by the red meter, and your", 6, 165);
-            graphics.drawString("ammunition by the blue meter. If your", 6, 180);
+            graphics.drawString("displayed by the red metre, and your", 6, 165);
+            graphics.drawString("ammunition by the blue metre. If your", 6, 180);
             graphics.drawString("health depletes to 0, you lose the game. Also, your", 6, 195);
             graphics.drawString("ammunition has a cooldown before it reloads, meaning", 6, 210);
             graphics.drawString("you must wait before hitting the spacebar again for", 6, 225);
