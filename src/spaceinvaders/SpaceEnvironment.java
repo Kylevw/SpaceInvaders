@@ -284,6 +284,7 @@ class SpaceEnvironment extends Environment {
                         difficulty++;
                         level = 1;
                     }
+                    displacement = 0;
                     alienTimer = 0;
                     timerTick = 0;
                     summonAlienWave();
@@ -834,7 +835,6 @@ class SpaceEnvironment extends Environment {
                 summonAliens(36, -1062, Enemy.MEDIUM, 7, 78, 3, 40, 264);
                 summonAliens(36, -1116, Enemy.LARGE, 5, 114, 3, 40, 264);
                 summonAliens(36, -1170, Enemy.MEDIUM, 7, 78, 3, 40, 264);
-                stateLevel();
             } else if (level == 6) {
                 summonAliens(36, -1008, Enemy.LARGE, 5, 114, 3, 40, 264);
                 summonAliens(36, -1062, Enemy.SMALL, 9, 60, 3, 40, 264);
@@ -991,39 +991,39 @@ class SpaceEnvironment extends Environment {
             graphics.setFont(spacefont_32);
             graphics.drawString("HOW TO PLAY", 144, 72);
             graphics.setFont(spacefont_12);
-            graphics.drawString("Aliens are descending towards your ship! Fire at", 6, 120);
-            graphics.drawString("them by pressing SPACE, and dodge their attacks by", 6, 135);
-            graphics.drawString("moving left + right. Your health is", 6, 150);
-            graphics.drawString("displayed by the red metre, and your", 6, 165);
-            graphics.drawString("ammunition by the blue metre. If your", 6, 180);
-            graphics.drawString("health depletes to 0, you lose the game. Also, your", 6, 195);
-            graphics.drawString("ammunition has a cooldown before it reloads, meaning", 6, 210);
-            graphics.drawString("you must wait before hitting the spacebar again for", 6, 225);
-            graphics.drawString("it to recharge.", 6, 240);
-            graphics.drawString("Upon the death of an alien, you will be rewarded", 6, 270);
-            graphics.drawString("points, along with the possibilty of a", 6, 285);
-            graphics.drawString("power-up. A power-up can be collected by", 6, 300);
-            graphics.drawString("running into the pulsing orb with your", 6, 315);
-            graphics.drawString("ship. Upon picking up a power-up, a timer will", 6, 330);
-            graphics.drawString("appear on the bottom-left of the screen, indicating", 6, 345);
-            graphics.drawString("how long the power-up has left before depleting.", 6, 360);
-            graphics.drawString("You will complete the level by clearing out each", 6, 390);
-            graphics.drawString("wave of aliens in the level, each getting faster and", 6, 405);
-            graphics.drawString("stronger as you progress. See how long you can", 6, 420);
-            graphics.drawString("survive before the aliens destroy you and your ship!", 6, 435);
+            graphics.drawString("Aliens are descending towards your ship! Fire at", 10, 120);
+            graphics.drawString("them by pressing SPACE, and dodge their attacks by", 10, 135);
+            graphics.drawString("moving left + right. Your health is", 10, 150);
+            graphics.drawString("displayed by the red metre, and your", 10, 165);
+            graphics.drawString("ammunition by the blue metre. If your", 10, 180);
+            graphics.drawString("health depletes to 0, you lose the game. Also, your", 10, 195);
+            graphics.drawString("ammunition has a cooldown before it reloads, meaning", 10, 210);
+            graphics.drawString("you must wait before hitting the spacebar again for", 10, 225);
+            graphics.drawString("it to recharge.", 10, 240);
+            graphics.drawString("Upon the death of an alien, you will be rewarded", 10, 270);
+            graphics.drawString("points, along with the possibilty of a", 10, 285);
+            graphics.drawString("power-up. A power-up can be collected by", 10, 300);
+            graphics.drawString("running into the pulsing orb with your", 10, 315);
+            graphics.drawString("ship. Upon picking up a power-up, a timer will", 10, 330);
+            graphics.drawString("appear on the bottom-left of the screen, indicating", 10, 345);
+            graphics.drawString("how long the power-up has left before depleting.", 10, 360);
+            graphics.drawString("You will complete the level by clearing out each", 10, 390);
+            graphics.drawString("wave of aliens in the level, each getting faster and", 10, 405);
+            graphics.drawString("stronger as you progress. See how long you can", 10, 420);
+            graphics.drawString("survive before the aliens destroy you and your ship!", 10, 435);
             graphics.drawString("Press ESCAPE to return to menu", 140, 560);
             
             graphics.drawImage(im.getImage(SpriteManager.YELLOW_ALIEN), 136, 470, 48, 48, this);
             graphics.drawImage(im.getImage(SpriteManager.GREEN_ALIEN), 290, 470, 60, 48, this);
             graphics.drawImage(im.getImage(SpriteManager.BLUE_ALIEN), 444, 470, 72, 48, this);
-            graphics.drawImage(im.getImage(SpriteManager.POWERUP_SHIELD_LARGE), 500, 278, 36, 36, this);
-            graphics.drawImage(im.getImage(SpriteManager.POWERUP_SPEED_LARGE), 542, 278, 36, 36, this);
-            graphics.drawImage(im.getImage(SpriteManager.POWERUP_RAPID_FIRE_LARGE), 584, 278, 36, 36, this);
+            graphics.drawImage(im.getImage(SpriteManager.POWERUP_SHIELD_LARGE), 504, 278, 36, 36, this);
+            graphics.drawImage(im.getImage(SpriteManager.POWERUP_SPEED_LARGE), 546, 278, 36, 36, this);
+            graphics.drawImage(im.getImage(SpriteManager.POWERUP_RAPID_FIRE_LARGE), 588, 278, 36, 36, this);
             for (int i = 0; i < 16; i++) {
-                graphics.drawImage(im.getImage(SpriteManager.RED_METER), 460 + (9 * i), 140, 12, 18, this);
-                graphics.drawImage(im.getImage(SpriteManager.RED_METER_FILL), 460 + (9 * i), 140, 12, 18, this);
-                graphics.drawImage(im.getImage(SpriteManager.BLUE_METER), 460 + (9 * i), 161, 12, 18, this);
-                graphics.drawImage(im.getImage(SpriteManager.BLUE_METER_FILL), 460 + (9 * i), 161, 12, 18, this);
+                graphics.drawImage(im.getImage(SpriteManager.RED_METER), 464 + (9 * i), 140, 12, 18, this);
+                graphics.drawImage(im.getImage(SpriteManager.RED_METER_FILL), 464 + (9 * i), 140, 12, 18, this);
+                graphics.drawImage(im.getImage(SpriteManager.BLUE_METER), 464 + (9 * i), 161, 12, 18, this);
+                graphics.drawImage(im.getImage(SpriteManager.BLUE_METER_FILL), 464 + (9 * i), 161, 12, 18, this);
             }
         } else if (paused) {
             graphics.setColor(Color.WHITE);

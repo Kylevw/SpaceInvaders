@@ -5,7 +5,6 @@
  */
 package spaceinvaders;
 
-import images.Animator;
 import images.ImageManager;
 import images.ResourceTools;
 import java.awt.Image;
@@ -72,8 +71,6 @@ public class SpriteManager implements SpriteProviderIntf {
     
     private ArrayList<String> images;
     
-    private Animator iam;
-    
     {
         
         HashMap<String, Image> imageMap = new HashMap<>();
@@ -130,7 +127,6 @@ public class SpriteManager implements SpriteProviderIntf {
 
         im = new ImageManager(imageMap);
         images = new ArrayList<>();
-        iam = new Animator(im, images, 20);
     }
     
     @Override
