@@ -11,9 +11,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,11 +36,11 @@ import path.TrigonometryCalculator;
 class SpaceEnvironment extends Environment {
     
 //<editor-fold defaultstate="collapsed" desc="Properties">
-    private ArrayList<Star> stars;
-    private ArrayList<Projectile> projectiles;
-    private ArrayList<Enemy> enemies;
-    private ArrayList<PowerOrb> powerOrbs;
-    private ArrayList<TextBox> textBoxs;
+    private final ArrayList<Star> stars;
+    private final ArrayList<Projectile> projectiles;
+    private final ArrayList<Enemy> enemies;
+    private final ArrayList<PowerOrb> powerOrbs;
+    private final ArrayList<TextBox> textBoxs;
     Ship ship;
     
     private int direction;
@@ -112,7 +114,7 @@ class SpaceEnvironment extends Environment {
         projectiles = new ArrayList<>();
         enemies = new ArrayList<>();
         powerOrbs = new ArrayList<>();
-        int starCount = 48; // number of stars on screen
+        int starCount = 128; // number of stars on screen
         for (int i = 0; i < starCount; i++) {
               stars.add(new Star(random(640), random(640), random(3)));
         }
@@ -673,62 +675,62 @@ class SpaceEnvironment extends Environment {
                     ship.accelerate(-ship.getSpeed());
                 }
                 leftDebug = true;
-//            } else if (e.getKeyCode() == KeyEvent.VK_1) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 0;
-//            } else if (e.getKeyCode() == KeyEvent.VK_2) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 1;
-//            } else if (e.getKeyCode() == KeyEvent.VK_3) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 2;
-//            } else if (e.getKeyCode() == KeyEvent.VK_4) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 3;
-//            } else if (e.getKeyCode() == KeyEvent.VK_5) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 4;
-//            } else if (e.getKeyCode() == KeyEvent.VK_6) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 5;
-//            } else if (e.getKeyCode() == KeyEvent.VK_7) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 6;
-//            } else if (e.getKeyCode() == KeyEvent.VK_8) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 7;
-//            } else if (e.getKeyCode() == KeyEvent.VK_9) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 8;
-//            } else if (e.getKeyCode() == KeyEvent.VK_0) {
-//                textBoxs.removeAll(textBoxs);
-//                levelUpTimer = 80;
-//                enemies.removeAll(enemies);
-//                level = 9;
-//            } else if (e.getKeyCode() == KeyEvent.VK_P) {
-//                // speeds up background
-//                difficulty += 1;
-//            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
-//                // slows up background
-//                difficulty -= 1;
+            } else if (e.getKeyCode() == KeyEvent.VK_1) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 0;
+            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 1;
+            } else if (e.getKeyCode() == KeyEvent.VK_3) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 2;
+            } else if (e.getKeyCode() == KeyEvent.VK_4) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 3;
+            } else if (e.getKeyCode() == KeyEvent.VK_5) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 4;
+            } else if (e.getKeyCode() == KeyEvent.VK_6) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 5;
+            } else if (e.getKeyCode() == KeyEvent.VK_7) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 6;
+            } else if (e.getKeyCode() == KeyEvent.VK_8) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 7;
+            } else if (e.getKeyCode() == KeyEvent.VK_9) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 8;
+            } else if (e.getKeyCode() == KeyEvent.VK_0) {
+                textBoxs.removeAll(textBoxs);
+                levelUpTimer = 80;
+                enemies.removeAll(enemies);
+                level = 9;
+            } else if (e.getKeyCode() == KeyEvent.VK_P) {
+                // speeds up background
+                difficulty += 1;
+            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
+                // slows up background
+                difficulty -= 1;
             }
         } else if (menuState == 0 && paused) {
             if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -910,7 +912,14 @@ class SpaceEnvironment extends Environment {
     }
 
     @Override
-    public void paintEnvironment(Graphics graphics) {
+    public void paintEnvironment(Graphics g) {
+        
+        AffineTransform atrans;
+
+        Graphics2D graphics = (Graphics2D) g;
+        atrans = AffineTransform.getScaleInstance((double) SpaceInvaders.getWindowSize().width / 640, (double) SpaceInvaders.getWindowSize().height / 640);
+        if (atrans != null)
+          graphics.setTransform(atrans);
         
         stars.stream().forEach((theStar) -> {
             theStar.draw(graphics);
