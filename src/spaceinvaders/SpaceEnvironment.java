@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import path.TrigonometryCalculator;
 
 /**
@@ -116,7 +115,7 @@ class SpaceEnvironment extends Environment {
         powerOrbs = new ArrayList<>();
         int starCount = 128; // number of stars on screen
         for (int i = 0; i < starCount; i++) {
-              stars.add(new Star(random(640), random(640), random(3)));
+              stars.add(new Star(random(640), random(640), random(5)));
         }
     }
     

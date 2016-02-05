@@ -5,7 +5,6 @@
  */
 package spaceinvaders;
 
-import audio.AudioPlayer;
 import audio.Playlist;
 import audio.SoundManager;
 import audio.Source;
@@ -18,8 +17,8 @@ import java.util.ArrayList;
  */
 public class AudioManager implements AudioPlayerIntf {
     
-    private SoundManager am;
-    private ArrayList<Track> tracks = new ArrayList<>();
+    private final SoundManager am;
+    private final ArrayList<Track> tracks = new ArrayList<>();
     
     public static String FIRE = "FIRE";
     public static String GAME = "GAME";
@@ -54,11 +53,8 @@ public class AudioManager implements AudioPlayerIntf {
     
     @Override
     public void playAudio(String name, boolean loop) {
-        if (loop == true) {
-            am.play(name, Integer.MAX_VALUE);
-        } else {
-            am.play(name);
-        }
+        if (loop) am.play(name, Integer.MAX_VALUE);
+        else am.play(name);
     }
 
     @Override

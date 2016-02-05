@@ -7,7 +7,7 @@ package spaceinvaders;
 
 import environment.Actor;
 import environment.Velocity;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
@@ -39,8 +39,8 @@ public class Projectile extends Actor {
         this.isFriendly = isFriendly;
         this.imageProvider = imageProvider;
     }
-    
-    public void draw(Graphics graphics) {
+    @Override
+    public void draw(Graphics2D graphics) {
         if (!isFriendly && timer > 1) {
             if (width == 10 * size) {
                 graphics.drawImage(imageProvider.getImage(SpriteManager.PROJECTILE_LARGE_WHITE), (int) position.getX(), (int) position.getY(), width, height, null);

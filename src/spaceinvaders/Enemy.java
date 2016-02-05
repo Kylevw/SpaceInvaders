@@ -7,7 +7,7 @@ package spaceinvaders;
 
 import environment.Actor;
 import environment.Velocity;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -72,7 +72,8 @@ public class Enemy extends Actor {
         }
     }
     
-    public void draw(Graphics graphics) {
+    @Override
+    public void draw(Graphics2D graphics) {
         if (type == MOTHERSHIP && shootingBeam) {
             for (int i = (int) (position.getY() + (size * (height / 3 * ((beamTimer + 3) / 3)))); i < 640; i += size * 46) {
                 graphics.drawImage(imageProvider.getImage(SpriteManager.MOTHERSHIP_BEAM), (int) position.getX() + (((width / 2) - 19) * size), i, size * 38, size * 46, null);

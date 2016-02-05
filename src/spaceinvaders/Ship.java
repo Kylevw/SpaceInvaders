@@ -8,6 +8,7 @@ package spaceinvaders;
 import environment.Actor;
 import environment.Velocity;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -73,8 +74,8 @@ public class Ship extends Actor {
             return new Rectangle(position.x + (size * 2), position.y, width - (size * 4), height);
         }
     }
-
-    public void draw(Graphics graphics) {
+    @Override
+    public void draw(Graphics2D graphics) {
         if (!flash) {
             if (powerUp == SPEED) {
                 graphics.drawImage(getImage(), ((int) position.getX() + (size * 4)), ((int) position.getY() + (size * 4)), size * 8, size * 8, null);

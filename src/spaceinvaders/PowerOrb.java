@@ -7,7 +7,7 @@ package spaceinvaders;
 
 import environment.Actor;
 import environment.Velocity;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -47,7 +47,8 @@ public class PowerOrb extends Actor {
         return new Rectangle(position.x - (2 * size), position.y - (2 * size), width - (4 * size), height - (4 * size));
     }
     
-    public void draw(Graphics graphics) {
+    @Override
+    public void draw(Graphics2D graphics) {
         if (timer >= 0 && timer <= 2) {
             if (type == RAPID_FIRE) {
                 graphics.drawImage(imageProvider.getImage(SpriteManager.POWERUP_RAPID_FIRE_SMALL), (int) position.getX() + size, (int) position.getY() + size, width - (size * 2), height - (size * 2), null);
