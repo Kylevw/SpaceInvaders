@@ -7,7 +7,6 @@ package spaceinvaders;
 
 import environment.Actor;
 import environment.Velocity;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -24,12 +23,14 @@ public class Ship extends Actor {
         energy = MAX_HEALTH;
     }
 
-    private Point position;
-    private Velocity velocity;
-    private int size;
-    private int width;
-    private int height;
-    private int speed;
+    private final Point position;
+    
+    private Direction direction;
+    
+    private final int size;
+    private final int width;
+    private final int height;
+    private final int speed;
 
     private int invulTimer;
     private boolean flash;
@@ -132,6 +133,12 @@ public class Ship extends Actor {
     }
 
     void shipTimerTaskHandler() {
+        
+        
+        if (direction == Direction.LEFT) setVelocity(-speed, 0);
+        else if (direction == Direction.RIGHT) setVelocity(speed, 0);
+        else setVelocity(0, getVelocity().y);
+        
         if (invulTimer > 0) {
             invulTimer--;
         }
@@ -167,6 +174,7 @@ public class Ship extends Actor {
             powerUp = 0;
             audioPlayer.playAudio(AudioManager.LOSE_POWER_UP, false);
         }
+        
         if (powerUp == SPEED) {
             move();
         }
@@ -271,4 +279,13 @@ public class Ship extends Actor {
     int getHeight() {
         return height;
     }
+    
+    void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+    
+    Direction getDirection() {
+        return direction;
+    }
+    
 }

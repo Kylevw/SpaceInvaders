@@ -53,7 +53,7 @@ public class AudioManager implements AudioPlayerIntf {
     
     @Override
     public void playAudio(String name, boolean loop) {
-        if (loop) am.play(name, Integer.MAX_VALUE);
+        if (loop) am.play(name, -1);
         else am.play(name);
     }
 

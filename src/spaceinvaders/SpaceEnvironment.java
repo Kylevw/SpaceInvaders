@@ -198,8 +198,8 @@ class SpaceEnvironment extends Environment {
             textBoxTimer = 0;
         }
         
-        if (score > 999999999) {
-            score = 999999999;
+        if (score > 99999999) {
+            score = 99999999;
         }
         
         if (selectedButton < 0) {
@@ -276,6 +276,7 @@ class SpaceEnvironment extends Environment {
                 levelUpTimer++;
                 if (levelUpTimer >= 80) {
                     levelUpTimer = 0;
+                    score += level * 10000;
                     level++;
                     if (level == 10) {
                         musicTimer = 1;
@@ -648,7 +649,6 @@ class SpaceEnvironment extends Environment {
                 } else if (e.getKeyCode() == KeyEvent.VK_P) {
                     if (cheatProgress == 9) {
                         level = 10;
-                        score = 45000;
                         am.playAudio(AudioManager.POWER_UP, false);
                     }
                     cheatProgress = 0;
@@ -662,16 +662,18 @@ class SpaceEnvironment extends Environment {
                 if (ship != null) {
                     fire();
                 }
-            } else if (e.getKeyCode() == KeyEvent.VK_D && !rightDebug) {
+            } else if (e.getKeyCode() == KeyEvent.VK_D && !rightDebug || e.getKeyCode() == KeyEvent.VK_RIGHT && !rightDebug) {
                 // right movement for ship
                 if (ship != null) {
-                    ship.accelerate(ship.getSpeed());
+                    if (ship.getDirection() == Direction.LEFT) ship.setDirection(Direction.BOTH);
+                    else ship.setDirection(Direction.RIGHT);
                 }
                 rightDebug = true;
                 
-            } else if (e.getKeyCode() == KeyEvent.VK_A && !leftDebug) {
+            } else if (e.getKeyCode() == KeyEvent.VK_A && !leftDebug || e.getKeyCode() == KeyEvent.VK_LEFT && !leftDebug) {
                 if (ship != null) {
-                    ship.accelerate(-ship.getSpeed());
+                    if (ship.getDirection() == Direction.RIGHT) ship.setDirection(Direction.BOTH);
+                    else ship.setDirection(Direction.LEFT);
                 }
                 leftDebug = true;
             } else if (e.getKeyCode() == KeyEvent.VK_1) {
@@ -773,7 +775,7 @@ class SpaceEnvironment extends Environment {
                 levelUpTimer = -140;
                 menuState = 0;
                 ship = new Ship(im.getImage(SpriteManager.SHIP), new Point(296, 640), 3, new Velocity(0, 0), 9, new ShipMovementLimitProvider(24, 568, 505, 640), im, am);
-                textBoxs.add(new TextBox(68, 280, 220, false, false, spacefont_24, "A+D: Move Left/Right"));
+                textBoxs.add(new TextBox(32, 280, 220, false, false, spacefont_24, "Left/Right Arrows: Move"));
                 textBoxs.add(new TextBox(164, 310, 220, false, false, spacefont_24, "SPACE: Shoot"));
                 textBoxs.add(new TextBox(128, 340, 220, false, false, spacefont_24, "ESC: Pause Game"));
                 stopMusic();
@@ -891,12 +893,14 @@ class SpaceEnvironment extends Environment {
     public void keyReleasedHandler(KeyEvent e) {
         // when releasing the right key, stops ship from moving right
         if (ship != null) {
-            if (e.getKeyCode() == KeyEvent.VK_D && rightDebug) {
-                    ship.accelerate(-ship.getSpeed(), 0);
+            if (e.getKeyCode() == KeyEvent.VK_D && rightDebug || e.getKeyCode() == KeyEvent.VK_RIGHT && rightDebug) {
+                    if (ship.getDirection() == Direction.BOTH) ship.setDirection(Direction.LEFT);
+                    else ship.setDirection(Direction.NONE);
                     rightDebug = false;
                     // when releasing the left key, stops ship from moving right
-            } else if (e.getKeyCode() == KeyEvent.VK_A && leftDebug) {
-                    ship.accelerate(ship.getSpeed(), 0);
+            } else if (e.getKeyCode() == KeyEvent.VK_A && leftDebug || e.getKeyCode() == KeyEvent.VK_LEFT && leftDebug) {
+                    if (ship.getDirection() == Direction.BOTH) ship.setDirection(Direction.RIGHT);
+                    else ship.setDirection(Direction.NONE);
                     leftDebug = false;
                     // allows the SPACE key to be pressed again after being released
             }
@@ -963,8 +967,9 @@ class SpaceEnvironment extends Environment {
         if (menuState == 0) {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_24);
-            graphics.drawString(String.format("Score:%09d%n", score), 3, 28);
-            graphics.drawString(String.format("Level:%02d%n", (difficulty * 10) + level), 445, 28);
+            graphics.drawString(String.format("Score:%08d%n", score), 3, 28);
+            if (difficulty >= 10) graphics.drawString(String.format("Level:%03d%n", (difficulty * 10) + level), 421, 28);
+            else graphics.drawString(String.format("Level:%02d%n", (difficulty * 10) + level), 445, 28);
         }
         
         if (paused || menuState > 0) {
@@ -987,7 +992,7 @@ class SpaceEnvironment extends Environment {
             graphics.setFont(spacefont_12);
             graphics.drawString("Kyle van Wiltenburg - 2015", 4, 608);
             graphics.setFont(spacefont_24);
-            graphics.drawString(String.format("HIGH:%09d%n", highScore), 3, 28);
+            graphics.drawString(String.format("HIGH:%08d%n", highScore), 3, 28);
             if (textBoxTimer <= 60) {
                 graphics.setFont(spacefont_24);
                 graphics.drawString("- Insert Coin(s) -", 104, 500);
@@ -1042,7 +1047,7 @@ class SpaceEnvironment extends Environment {
             graphics.drawString("Resume Game", 210, 270);
             graphics.drawString("How To Play", 210, 310);
             graphics.drawString("Quit Game", 230, 350);
-            graphics.drawString(String.format("Highscore:%09d%n", highScore), 130, 160);
+            graphics.drawString(String.format("Highscore:%08d%n", highScore), 140, 160);
         } else if (menuState == 3) {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_32);
@@ -1051,7 +1056,7 @@ class SpaceEnvironment extends Environment {
                 graphics.drawString("NEW HIGHSCORE!", 96, 306);
             }
             graphics.setFont(spacefont_20);
-            graphics.drawString(String.format("Final Score: %09d%n", score), 90, 140);
+            graphics.drawString(String.format("Final Score: %08d%n", score), 100, 140);
             graphics.drawString(String.format("Died On Level: %02d%n", level), 150, 170);
             if (textBoxTimer <= 60) {
                 graphics.drawString(String.format("Press ENTER to continue", level), 90, 450);
