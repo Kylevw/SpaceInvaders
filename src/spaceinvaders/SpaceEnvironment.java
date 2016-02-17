@@ -276,7 +276,13 @@ class SpaceEnvironment extends Environment {
                 levelUpTimer++;
                 if (levelUpTimer >= 80) {
                     levelUpTimer = 0;
-                    score += level * 10000;
+                    int addScore = (level + (difficulty * 10)) * 10000;
+                    score += addScore;
+                    if (ship != null && addScore > 0) {
+                        if (addScore >= 100000) textBoxs.add(new TextBox(ship.getX() + (ship.getWidth() / 2) - 60, ship.getY() + 20, 80, true, false, spacefont_20, "" + addScore));
+                        else textBoxs.add(new TextBox(ship.getX() + (ship.getWidth() / 2) - 50, ship.getY() + 20, 80, true, false, spacefont_20, "" + addScore));
+                        am.playAudio(AudioManager.POWER_UP, false);
+                    }
                     level++;
                     if (level == 10) {
                         musicTimer = 1;
@@ -284,6 +290,7 @@ class SpaceEnvironment extends Environment {
                     if (level > 10) {
                         am.playAudio(AudioManager.LEVEL_UP, false);
                         difficulty++;
+                        if (ship != null) textBoxs.add(new TextBox(ship.getX() + (ship.getWidth() / 2) - 96, ship.getY() - 4, 80, true, false, spacefont_24, "SPEED UP"));
                         level = 1;
                     }
                     displacement = 0;
@@ -434,6 +441,7 @@ class SpaceEnvironment extends Environment {
             getPowerOrbs().stream().filter((powerOrb) -> (powerOrb.getObjectBoundary().intersects(ship.getObjectBoundary()))).map((powerOrb) -> {
                 ship.togglePowerUp(powerOrb.getType());
                 score += 25;
+                textBoxs.add(new TextBox(ship.getX() + (ship.getWidth() / 2) - 20, ship.getY() + 20, 40, true, false, spacefont_20, "25"));
                 return powerOrb;
             }).forEach((powerOrb) -> {
                 hitShip.add(powerOrb);
@@ -449,6 +457,7 @@ class SpaceEnvironment extends Environment {
     private void enemyAI(){
         ArrayList<Enemy> noHealth = new ArrayList<>();
         getEnemies().stream().map((enemy) -> {
+            enemy.damageTimer();
         if (enemy.getY() >= 640) {
                     noHealth.add(enemy);
                 } else if (enemy.getHealth() <= 0) {
@@ -676,62 +685,62 @@ class SpaceEnvironment extends Environment {
                     else ship.setDirection(Direction.LEFT);
                 }
                 leftDebug = true;
-            } else if (e.getKeyCode() == KeyEvent.VK_1) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 0;
-            } else if (e.getKeyCode() == KeyEvent.VK_2) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 1;
-            } else if (e.getKeyCode() == KeyEvent.VK_3) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 2;
-            } else if (e.getKeyCode() == KeyEvent.VK_4) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 3;
-            } else if (e.getKeyCode() == KeyEvent.VK_5) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 4;
-            } else if (e.getKeyCode() == KeyEvent.VK_6) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 5;
-            } else if (e.getKeyCode() == KeyEvent.VK_7) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 6;
-            } else if (e.getKeyCode() == KeyEvent.VK_8) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 7;
-            } else if (e.getKeyCode() == KeyEvent.VK_9) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 8;
-            } else if (e.getKeyCode() == KeyEvent.VK_0) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 9;
-            } else if (e.getKeyCode() == KeyEvent.VK_P) {
-                // speeds up background
-                difficulty += 1;
-            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
-                // slows up background
-                difficulty -= 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_1) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 0;
+//            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_3) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 2;
+//            } else if (e.getKeyCode() == KeyEvent.VK_4) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 3;
+//            } else if (e.getKeyCode() == KeyEvent.VK_5) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 4;
+//            } else if (e.getKeyCode() == KeyEvent.VK_6) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 5;
+//            } else if (e.getKeyCode() == KeyEvent.VK_7) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 6;
+//            } else if (e.getKeyCode() == KeyEvent.VK_8) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 7;
+//            } else if (e.getKeyCode() == KeyEvent.VK_9) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 8;
+//            } else if (e.getKeyCode() == KeyEvent.VK_0) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 9;
+//            } else if (e.getKeyCode() == KeyEvent.VK_P) {
+//                // speeds up background
+//                difficulty += 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
+//                // slows up background
+//                difficulty -= 1;
             }
         } else if (menuState == 0 && paused) {
             if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -944,13 +953,13 @@ class SpaceEnvironment extends Environment {
             theEnemy.draw(graphics);
         });
         
-        getTextBoxs().stream().forEach((theTextBox) -> {
-            theTextBox.draw(graphics);
-        });
-        
         if (ship != null) {
             ship.draw(graphics);
         }
+        
+        getTextBoxs().stream().forEach((theTextBox) -> {
+            theTextBox.draw(graphics);
+        });
         
         if (healthMeter != null) {
             healthMeter.draw(graphics);

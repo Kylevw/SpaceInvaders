@@ -48,11 +48,17 @@ public class SpriteManager implements SpriteProviderIntf {
     public static String GREEN_METER_FLASH = "GREEN_METER_FLASH";
     
     public static String YELLOW_ALIEN = "YELLOW_ALIEN";
+    public static String YELLOW_ALIEN_TINT = "YELLOW_ALIEN_TINT";
     public static String GREEN_ALIEN = "GREEN_ALIEN";
+    public static String GREEN_ALIEN_TINT = "GREEN_ALIEN_TINT";
     public static String BLUE_ALIEN = "BLUE_ALIEN";
+    public static String BLUE_ALIEN_TINT = "BLUE_ALIEN_TINT";
     public static String YELLOW_ALIEN_MOVE = "YELLOW_ALIEN_MOVE";
+    public static String YELLOW_ALIEN_MOVE_TINT = "YELLOW_ALIEN_MOVE_TINT";
     public static String GREEN_ALIEN_MOVE = "GREEN_ALIEN_MOVE";
+    public static String GREEN_ALIEN_MOVE_TINT = "GREEN_ALIEN_MOVE_TINT";
     public static String BLUE_ALIEN_MOVE = "BLUE_ALIEN_MOVE";
+    public static String BLUE_ALIEN_MOVE_TINT = "BLUE_ALIEN_MOVE_TINT";
     public static String PROJECTILE_SMALL_YELLOW = "PROJECTILE_SMALL_YELLOW";
     public static String PROJECTILE_LARGE_YELLOW = "PROJECTILE_LARGE_YELLOW";
     public static String PROJECTILE_SMALL_GREEN = "PROJECTILE_SMALL_GREEN";
@@ -67,9 +73,9 @@ public class SpriteManager implements SpriteProviderIntf {
     public static String MOTHERSHIP = "MOTHERSHIP";
     public static String MOTHERSHIP_BEAM = "MOTHERSHIP_BEAM";
 
-    private ImageManager im;
+    private final ImageManager im;
     
-    private ArrayList<String> images;
+    private final ArrayList<String> images;
     
     {
         
@@ -116,11 +122,17 @@ public class SpriteManager implements SpriteProviderIntf {
         imageMap.put(GREEN_METER_FILL, spriteSheet.getSubimage(44, 98, 4, 6));
         imageMap.put(GREEN_METER_FLASH, spriteSheet.getSubimage(40, 98, 4, 6));
         imageMap.put(YELLOW_ALIEN, spriteSheet.getSubimage(0, 0, 16, 16));
+        imageMap.put(YELLOW_ALIEN_TINT, spriteSheet.getSubimage(40, 16, 16, 16));
         imageMap.put(GREEN_ALIEN, spriteSheet.getSubimage(32, 0, 20, 16));
+        imageMap.put(GREEN_ALIEN_TINT, spriteSheet.getSubimage(72, 16, 20, 16));
         imageMap.put(BLUE_ALIEN, spriteSheet.getSubimage(72, 0, 24, 16));
+        imageMap.put(BLUE_ALIEN_TINT, spriteSheet.getSubimage(40, 32, 24, 16));
         imageMap.put(YELLOW_ALIEN_MOVE, spriteSheet.getSubimage(16, 0, 16, 16));
+        imageMap.put(YELLOW_ALIEN_MOVE_TINT, spriteSheet.getSubimage(56, 16, 16, 16));
         imageMap.put(GREEN_ALIEN_MOVE, spriteSheet.getSubimage(52, 0, 20, 16));
+        imageMap.put(GREEN_ALIEN_MOVE_TINT, spriteSheet.getSubimage(92, 16, 20, 16));
         imageMap.put(BLUE_ALIEN_MOVE, spriteSheet.getSubimage(96, 0, 24, 16));
+        imageMap.put(BLUE_ALIEN_MOVE_TINT, spriteSheet.getSubimage(64, 32, 24, 16));
         
         imageMap.put(MOTHERSHIP, motherShip.getSubimage(0, 0, 122, 47));
         imageMap.put(MOTHERSHIP_BEAM, motherShip.getSubimage(0, 47, 38, 46));

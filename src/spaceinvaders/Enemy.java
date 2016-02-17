@@ -30,6 +30,7 @@ public class Enemy extends Actor {
     private int attackTimer;
     private int deathTimer;
     private int alienSummonTimer;
+    private int damageTimer;
     
     private int health;
     private int type;
@@ -92,6 +93,26 @@ public class Enemy extends Actor {
         } else {
             graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
         }
+        
+        if (damageTimer > 0) {
+            if (frame == 0) {
+                if (type == LARGE) {
+                   graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                } else if (type == MEDIUM) {
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                } else if (type == SMALL) {
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                }
+            } else if (frame == 1) {
+                if (type == LARGE) {
+                   graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_MOVE_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                } else if (type == MEDIUM) {
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_MOVE_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                } else if (type == SMALL) {
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_MOVE_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                }
+            }
+        }
     }
     
     public void enemyTimeTaskHandler() {
@@ -143,6 +164,10 @@ public class Enemy extends Actor {
         this.attackTimer = attackTimer;
     }
     
+    public void damageTimer() {
+        if (damageTimer > 0) damageTimer--;
+    }
+    
     public int getX() {
         return (int) (position.getX());
     }
@@ -154,6 +179,7 @@ public class Enemy extends Actor {
     }
     void Damage(int damage) {
         health -= damage;
+        damageTimer = 2;
     }
     int getHealth() {
         return health;
