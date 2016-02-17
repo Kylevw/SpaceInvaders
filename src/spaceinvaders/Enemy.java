@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 public class Enemy extends Actor {
     
     private Velocity velocity;
-    private Point position;
     private int size;
     private int width;
     private int height;
@@ -52,7 +51,6 @@ public class Enemy extends Actor {
     
     public Enemy(BufferedImage image, Point position, int size, Velocity velocity, int health, int type, SpriteProviderIntf imageProvider, EnemyMovementPaternIntf limiter, AudioPlayerIntf audioPlayer) {
         super(image, position, velocity, new Point((image.getWidth() * 3), (image.getHeight() * 3)));
-        this.position = position;
         this.size = size;
         this.width = image.getWidth();
         this.height = image.getHeight();
@@ -67,7 +65,7 @@ public class Enemy extends Actor {
     @Override
     public Rectangle getObjectBoundary() {
         if (type == MOTHERSHIP) {
-            return new Rectangle(position.x, position.y + (size * 10), size * width, size * 24);
+            return new Rectangle(getPosition().x, getPosition().y + (size * 10), size * width, size * 24);
         } else {
             return super.getObjectBoundary();
         }
@@ -76,40 +74,40 @@ public class Enemy extends Actor {
     @Override
     public void draw(Graphics2D graphics) {
         if (type == MOTHERSHIP && shootingBeam) {
-            for (int i = (int) (position.getY() + (size * (height / 3 * ((beamTimer + 3) / 3)))); i < 640; i += size * 46) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.MOTHERSHIP_BEAM), (int) position.getX() + (((width / 2) - 19) * size), i, size * 38, size * 46, null);
+            for (int i = (int) (getPosition().y + (size * (height / 3 * ((beamTimer + 3) / 3)))); i < 640; i += size * 46) {
+                graphics.drawImage(imageProvider.getImage(SpriteManager.MOTHERSHIP_BEAM), (int) getPosition().x + (((width / 2) - 19) * size), i, size * 38, size * 46, null);
             }
         }
         if (frame == 1 && type != MOTHERSHIP) {
             if (type == LARGE) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_MOVE), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_MOVE), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
             } else if (type == MEDIUM) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_MOVE), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_MOVE), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
             } else if (type == SMALL) {
-                graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_MOVE), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_MOVE), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
             } else {
-                graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                graphics.drawImage(getImage(), (int) getPosition().y, (int) getPosition().y, size * width, size * height, null);
             }
         } else {
-            graphics.drawImage(getImage(), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+            graphics.drawImage(getImage(), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
         }
         
         if (damageTimer > 0) {
             if (frame == 0) {
                 if (type == LARGE) {
-                   graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                   graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_TINT), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
                 } else if (type == MEDIUM) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_TINT), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
                 } else if (type == SMALL) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_TINT), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
                 }
             } else if (frame == 1) {
                 if (type == LARGE) {
-                   graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_MOVE_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                   graphics.drawImage(imageProvider.getImage(SpriteManager.BLUE_ALIEN_MOVE_TINT), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
                 } else if (type == MEDIUM) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_MOVE_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.GREEN_ALIEN_MOVE_TINT), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
                 } else if (type == SMALL) {
-                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_MOVE_TINT), (int) position.getX(), (int) position.getY(), size * width, size * height, null);
+                    graphics.drawImage(imageProvider.getImage(SpriteManager.YELLOW_ALIEN_MOVE_TINT), (int) getPosition().x, (int) getPosition().y, size * width, size * height, null);
                 }
             }
         }
@@ -147,10 +145,10 @@ public class Enemy extends Actor {
     }
     
     private void xVelocityLimiter() {
-        if (position.x <= limiter.getMinX()) {
+        if (getPosition().x <= limiter.getMinX()) {
             velocity.x = Math.abs(velocity.x);
             attackTimer++;
-        } else if (position.x >= limiter.getMaxX()) {
+        } else if (getPosition().x >= limiter.getMaxX()) {
             velocity.x = -Math.abs(velocity.x);
             attackTimer++;
         }
@@ -169,10 +167,10 @@ public class Enemy extends Actor {
     }
     
     public int getX() {
-        return (int) (position.getX());
+        return (int) (getPosition().x);
     }
     public int getY() {
-        return (int) (position.getY());
+        return (int) (getPosition().y);
     }
     int getSize() {
         return size;
@@ -239,7 +237,7 @@ public class Enemy extends Actor {
         this.shootingBeam = shootingBeam;
     }
     Rectangle getBeamHitbox() {
-        return new Rectangle((int) position.getX() + (((width / 2) - 10) * size), (int) position.getY() + (height * size), 20 * size, 640);
+        return new Rectangle((int) getPosition().x + (((width / 2) - 10) * size), (int) getPosition().y + (height * size), 20 * size, 640);
     }
     void setAlienSummonTimer(int alienSummonTimer) {
         this.alienSummonTimer = alienSummonTimer;

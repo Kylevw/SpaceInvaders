@@ -259,7 +259,7 @@ class SpaceEnvironment extends Environment {
                 alienTimer++;
                 enemyAI();
                 
-                if (alienTimer >= 20 - ((level - 1 + (difficulty * 10)) / 3)) {
+                if (alienTimer >= 20 - ((level - 1 + (difficulty * 10)) / 3) - difficulty) {
                     alienTimer = 0;
                     timerTick++;
                     if (timerTick <= 6) {
@@ -271,7 +271,6 @@ class SpaceEnvironment extends Environment {
                     }
                 }
             }
-            
             if (enemies != null && enemies.isEmpty() && menuState == 0) {
                 levelUpTimer++;
                 if (levelUpTimer >= 80) {
@@ -509,7 +508,7 @@ class SpaceEnvironment extends Environment {
                         if (enemy.getType() == Enemy.MOTHERSHIP) {
                             enemy.setVelocity(2 + difficulty, 0);
                         } else {
-                         enemy.setVelocity(0, 0);
+                            enemy.setVelocity(0, 0);
                         }
                     }
                     enemy.enemyTimeTaskHandler();
@@ -571,7 +570,7 @@ class SpaceEnvironment extends Environment {
                     }
                 }
                 return enemy;
-            }).filter((enemy) -> (alienTimer >= 20 - ((level - 1 + (difficulty * 10)) / 3) && enemy.getType() != Enemy.MOTHERSHIP && !enemy.targetingShip())).forEach((enemy) -> {
+            }).filter((enemy) -> (alienTimer >= 20 - ((level - 1 + (difficulty * 10)) / 3) - difficulty && enemy.getType() != Enemy.MOTHERSHIP && !enemy.targetingShip())).forEach((enemy) -> {
                 if (ship != null && random(5) == 0) {
                     if (enemy.getType() == Enemy.MEDIUM) {
                         projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_SMALL_GREEN), new Point(enemy.getX() + (7 * enemy.getSize()), enemy.getY() + (5 * enemy.getSize())), (enemy.getSize()), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 10.0 + difficulty), 1, false, im));
@@ -685,62 +684,62 @@ class SpaceEnvironment extends Environment {
                     else ship.setDirection(Direction.LEFT);
                 }
                 leftDebug = true;
-            } else if (e.getKeyCode() == KeyEvent.VK_1) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 0;
-            } else if (e.getKeyCode() == KeyEvent.VK_2) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 1;
-            } else if (e.getKeyCode() == KeyEvent.VK_3) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 2;
-            } else if (e.getKeyCode() == KeyEvent.VK_4) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 3;
-            } else if (e.getKeyCode() == KeyEvent.VK_5) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 4;
-            } else if (e.getKeyCode() == KeyEvent.VK_6) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 5;
-            } else if (e.getKeyCode() == KeyEvent.VK_7) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 6;
-            } else if (e.getKeyCode() == KeyEvent.VK_8) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 7;
-            } else if (e.getKeyCode() == KeyEvent.VK_9) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 8;
-            } else if (e.getKeyCode() == KeyEvent.VK_0) {
-                textBoxs.removeAll(textBoxs);
-                levelUpTimer = 80;
-                enemies.removeAll(enemies);
-                level = 9;
-            } else if (e.getKeyCode() == KeyEvent.VK_P) {
-                // speeds up background
-                difficulty += 1;
-            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
-                // slows up background
-                difficulty -= 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_1) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 0;
+//            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_3) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 2;
+//            } else if (e.getKeyCode() == KeyEvent.VK_4) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 3;
+//            } else if (e.getKeyCode() == KeyEvent.VK_5) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 4;
+//            } else if (e.getKeyCode() == KeyEvent.VK_6) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 5;
+//            } else if (e.getKeyCode() == KeyEvent.VK_7) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 6;
+//            } else if (e.getKeyCode() == KeyEvent.VK_8) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 7;
+//            } else if (e.getKeyCode() == KeyEvent.VK_9) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 8;
+//            } else if (e.getKeyCode() == KeyEvent.VK_0) {
+//                textBoxs.removeAll(textBoxs);
+//                levelUpTimer = 80;
+//                enemies.removeAll(enemies);
+//                level = 9;
+//            } else if (e.getKeyCode() == KeyEvent.VK_P) {
+//                // speeds up background
+//                difficulty += 1;
+//            } else if (e.getKeyCode() == KeyEvent.VK_O && difficulty > 0) {
+//                // slows up background
+//                difficulty -= 1;
             }
         } else if (menuState == 0 && paused) {
             if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER) {
