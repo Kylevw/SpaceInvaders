@@ -113,7 +113,7 @@ class SpaceEnvironment extends Environment {
         projectiles = new ArrayList<>();
         enemies = new ArrayList<>();
         powerOrbs = new ArrayList<>();
-        int starCount = 128; // number of stars on screen
+        int starCount = 164; // number of stars on screen
         for (int i = 0; i < starCount; i++) {
               stars.add(new Star(random(640), random(640), random(5)));
         }
@@ -461,8 +461,8 @@ class SpaceEnvironment extends Environment {
                     noHealth.add(enemy);
                 } else if (enemy.getHealth() <= 0) {
                     if (enemy.getType() != Enemy.MOTHERSHIP) {
-                        score += 100 + (enemy.getType() * 50) + ((enemy.getType() + 1) * 5 * (level - 1 + (difficulty * 10)));
-                        String displayScore = "" + (100 + (enemy.getType() * 50) + ((enemy.getType() + 1) * 5 * (level - 1 + (difficulty * 10))));
+                        score += 100 + (enemy.getType() * 50) + ((enemy.getType() + 1) * 5 * (level + (difficulty * 10) - (enemy.getType() + 1)));
+                        String displayScore = "" + (100 + (enemy.getType() * 50) + ((enemy.getType() + 1) * 5 * (level + (difficulty * 10)- (enemy.getType() + 1))));
                         textBoxs.add(new TextBox(enemy.getX() + (enemy.getWidth() * enemy.getSize() / 2) - (displayScore.length() * 10), enemy.getY() + (enemy.getHeight() * enemy.getSize()) - 8, 40, true, false, spacefont_20, displayScore));
                         noHealth.add(enemy);
                         am.playAudio(AudioManager.KILL_ALIEN, false);
@@ -783,7 +783,7 @@ class SpaceEnvironment extends Environment {
                 levelUpTimer = -140;
                 menuState = 0;
                 ship = new Ship(im.getImage(SpriteManager.SHIP), new Point(296, 640), 3, new Velocity(0, 0), 9, new ShipMovementLimitProvider(24, 568, 505, 640), im, am);
-                textBoxs.add(new TextBox(32, 280, 220, false, false, spacefont_24, "Left/Right Arrows: Move"));
+                textBoxs.add(new TextBox(32, 280, 220, false, false, spacefont_24, "LEFT/RIGHT ARROWS: Move"));
                 textBoxs.add(new TextBox(164, 310, 220, false, false, spacefont_24, "SPACE: Shoot"));
                 textBoxs.add(new TextBox(128, 340, 220, false, false, spacefont_24, "ESC: Pause Game"));
                 stopMusic();
@@ -998,7 +998,7 @@ class SpaceEnvironment extends Environment {
             graphics.drawString("...Kinda", 320, 400);
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_12);
-            graphics.drawString("Kyle van Wiltenburg - 2015", 4, 608);
+            graphics.drawString("Kyle van Wiltenburg - 2016", 4, 624);
             graphics.setFont(spacefont_24);
             graphics.drawString(String.format("HIGH:%08d%n", highScore), 3, 28);
             if (textBoxTimer <= 60) {
