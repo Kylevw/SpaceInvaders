@@ -571,7 +571,7 @@ class SpaceEnvironment extends Environment {
                 }
                 return enemy;
             }).filter((enemy) -> (alienTimer >= 20 - ((level - 1 + (difficulty * 10)) / 3) - difficulty && enemy.getType() != Enemy.MOTHERSHIP && !enemy.targetingShip())).forEach((enemy) -> {
-                if (ship != null && random(5) == 0) {
+                if (ship != null && random(6) == 0) {
                     if (enemy.getType() == Enemy.MEDIUM) {
                         projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_SMALL_GREEN), new Point(enemy.getX() + (7 * enemy.getSize()), enemy.getY() + (5 * enemy.getSize())), (enemy.getSize()), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 10.0 + difficulty), 1, false, im));
                     } else if (enemy.getType() == Enemy.LARGE) {
