@@ -1062,7 +1062,7 @@ class SpaceEnvironment extends Environment {
             graphics.drawString("how long the power-up has left before depleting.", 10, 360);
             graphics.drawString("You will complete the level by clearing out each", 10, 390);
             graphics.drawString("wave of aliens in the level, each getting faster and", 10, 405);
-            graphics.drawString("stronger as you progress. Can you survive all 30", 10, 420);
+            graphics.drawString("stronger as you progress. Will you survive all 30", 10, 420);
             graphics.drawString("waves of aliens, or be turned into space dust?", 10, 435);
             graphics.drawString("Press ESCAPE to return to menu", 140, 560);
             
