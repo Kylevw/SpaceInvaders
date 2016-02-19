@@ -70,6 +70,8 @@ class SpaceEnvironment extends Environment {
     StatMeter energyMeter;
     StatMeter powerMeter;
     
+    private boolean endingGame;
+    
     AudioManager am;
     SpriteManager im;
     
@@ -273,7 +275,7 @@ class SpaceEnvironment extends Environment {
             }
             if (enemies != null && enemies.isEmpty() && menuState == 0) {
                 levelUpTimer++;
-                if (levelUpTimer >= 80) {
+                if (levelUpTimer >= 80 && !endingGame) {
                     levelUpTimer = 0;
                     int addScore = (level + (difficulty * 10)) * 10000;
                     score += addScore;
@@ -289,14 +291,31 @@ class SpaceEnvironment extends Environment {
                     if (level > 10) {
                         am.playAudio(AudioManager.LEVEL_UP, false);
                         difficulty++;
-                        if (ship != null) textBoxs.add(new TextBox(ship.getX() + (ship.getWidth() / 2) - 96, ship.getY() - 4, 80, true, false, spacefont_24, "SPEED UP"));
+                        if (ship != null && difficulty < 3) textBoxs.add(new TextBox(ship.getX() + (ship.getWidth() / 2) - 96, ship.getY() - 4, 80, true, false, spacefont_24, "SPEED UP"));
                         level = 1;
                     }
                     displacement = 0;
                     alienTimer = 0;
                     timerTick = 0;
-                    summonAlienWave();
-                    stateLevel();
+                    if (difficulty < 3) {
+                        summonAlienWave();
+                        stateLevel();
+                    } else {
+                        endGame();
+                    }
+                } else if (levelUpTimer >= 240) {
+                    ship = null;
+                    menuState = 3;
+                    checkScore();
+                    textBoxs.removeAll(textBoxs);
+                    ArrayList<Enemy> aboveScreen = new ArrayList<>();
+                    getEnemies().stream().filter((enemy) -> (enemy.getY() <= -enemy.getWidth() * enemy.getSize())).forEach((enemy) -> {
+                        aboveScreen.add(enemy);
+                    });
+                    enemies.removeAll(aboveScreen);
+                    stopMusic();
+                    am.playAudio(AudioManager.MENU, true);
+                    difficulty = -1;
                 }
             }
             
@@ -337,6 +356,12 @@ class SpaceEnvironment extends Environment {
                 }
             }
         }
+    }
+    
+    private void endGame() {
+        textBoxs.add(new TextBox(160, 320, 320, false, false, spacefont_32, "YOU WIN!!!"));
+        endingGame = true;
+        ship.flyUp();
     }
     
     public int getHighScore() {
@@ -506,7 +531,7 @@ class SpaceEnvironment extends Environment {
                     if (enemy.getY() >= enemy.getMinY() && enemy.isCentering()) {
                         enemy.center();
                         if (enemy.getType() == Enemy.MOTHERSHIP) {
-                            enemy.setVelocity(2 + difficulty, 0);
+                            enemy.setVelocity(2, 0);
                         } else {
                             enemy.setVelocity(0, 0);
                         }
@@ -514,8 +539,8 @@ class SpaceEnvironment extends Environment {
                     enemy.enemyTimeTaskHandler();
                     if (enemy.getDeathTimer() >= 200) {
                         noHealth.add(enemy);
-                        score += 5000 + (1000 * difficulty);
-                        String displayScore = "" + (5000 + (1000 * difficulty));
+                        score += 5000 * (difficulty + 1);
+                        String displayScore = "" + (5000 * (difficulty + 1));
                         textBoxs.add(new TextBox(enemy.getX() + (enemy.getWidth() * enemy.getSize() / 2) - (displayScore.length() * 10), enemy.getY() + (enemy.getHeight() * enemy.getSize() / 2), 40, true, false, spacefont_20, displayScore));
                     }
                 } else if (ship != null && enemy.getType() == Enemy.MOTHERSHIP && !enemy.isCentering()) {
@@ -550,13 +575,13 @@ class SpaceEnvironment extends Environment {
                             if (enemy.getAttackTimer() == -61) {
                                 enemy.setAttackTimer(0);
                             }
-                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_YELLOW), new Point(enemy.getX() + (((enemy.getWidth() * 3 / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() * 3 / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0), 3, false, im));
-                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_YELLOW), new Point(enemy.getX() + (((enemy.getWidth() / 2) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 12.0), 3, false, im));
-                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_YELLOW), new Point(enemy.getX() + (((enemy.getWidth() / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0), 3, false, im));
+                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_YELLOW), new Point(enemy.getX() + (((enemy.getWidth() * 3 / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() * 3 / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0 + (difficulty * 2)), 3, false, im));
+                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_YELLOW), new Point(enemy.getX() + (((enemy.getWidth() / 2) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 12.0 + (difficulty * 2)), 3, false, im));
+                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_YELLOW), new Point(enemy.getX() + (((enemy.getWidth() / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0 + (difficulty * 2)), 3, false, im));
                         } else if (ship != null && enemy.getAttackTimer() >= -60) {
-                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_BLUE), new Point(enemy.getX() + (((enemy.getWidth() * 3 / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() * 3 / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0), 3, false, im));
-                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_BLUE), new Point(enemy.getX() + (((enemy.getWidth() / 2) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 12.0), 3, false, im));
-                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_BLUE), new Point(enemy.getX() + (((enemy.getWidth() / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0), 3, false, im));
+                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_BLUE), new Point(enemy.getX() + (((enemy.getWidth() * 3 / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() * 3 / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0 + (difficulty * 2)), 3, false, im));
+                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_BLUE), new Point(enemy.getX() + (((enemy.getWidth() / 2) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(enemy.getCenterOfMass(), ship.getCenterOfMass(), 12.0 + (difficulty * 2)), 3, false, im));
+                            projectiles.add(new Projectile(im.getImage(SpriteManager.PROJECTILE_LARGE_BLUE), new Point(enemy.getX() + (((enemy.getWidth() / 4) - 1) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() * 3 / 4) * enemy.getSize())), (enemy.getSize() - 1), TrigonometryCalculator.calculateVelocity(new Point(enemy.getX() + ((enemy.getWidth() / 4) * enemy.getSize()), enemy.getY() + ((enemy.getHeight() / 2) * enemy.getSize())), ship.getCenterOfMass(), 12.0 + (difficulty * 2)), 3, false, im));
                         }
                         enemy.setAttackTimer(enemy.getAttackTimer() + 1);
                     } else if (enemy.shootingBeam() && enemy.getAttackTimer() == 2) {
@@ -684,6 +709,10 @@ class SpaceEnvironment extends Environment {
                     else ship.setDirection(Direction.LEFT);
                 }
                 leftDebug = true;
+//            } else if (e.getKeyCode() == KeyEvent.VK_Q) {
+//                getEnemies().stream().forEach((enemy) -> {
+//                    enemy.Damage(10000000);
+//                });
 //            } else if (e.getKeyCode() == KeyEvent.VK_1) {
 //                textBoxs.removeAll(textBoxs);
 //                levelUpTimer = 80;
@@ -751,6 +780,7 @@ class SpaceEnvironment extends Environment {
                     projectiles.removeAll(projectiles);
                     stopMusic();
                     ship = null;
+                    endingGame = false;
                     checkScore();
                     enemies.removeAll(enemies);
                     difficulty = -1;
@@ -771,6 +801,7 @@ class SpaceEnvironment extends Environment {
         } else if (menuState == 3) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 newHighScore = false;
+                endingGame = false;
                 enemies.removeAll(enemies);
                 score = 0;
                 musicTimer = 0;
@@ -875,7 +906,7 @@ class SpaceEnvironment extends Environment {
             } else if (level == 10) {
                 stopMusic();
                 am.playAudio(AudioManager.MOTHERSHIP_WARNING, false);
-                enemies.add(new Enemy(im.getImage(SpriteManager.MOTHERSHIP), new Point(76, -508), 4, new Velocity(0, 1), 400 + (difficulty * 120), Enemy.MOTHERSHIP, im, new EnemyMovementLimitProvider(-48, 36, 216, 0, 152), am));
+                enemies.add(new Enemy(im.getImage(SpriteManager.MOTHERSHIP), new Point(76, -508), 4, new Velocity(0, 1), 400 + (100 * difficulty), Enemy.MOTHERSHIP, im, new EnemyMovementLimitProvider(-48, 36, 216, 0, 152), am));
             }
     }
     
@@ -977,7 +1008,8 @@ class SpaceEnvironment extends Environment {
             graphics.setFont(spacefont_24);
             graphics.drawString(String.format("Score:%08d%n", score), 3, 28);
             String currentLevel = String.format("Level:%02d%n", (difficulty * 10) + level);
-            graphics.drawString(currentLevel, 640 - ((currentLevel.length() - 1) * 24), 28);
+            if (difficulty >= 3) graphics.drawString("Level:30", 640 - ((currentLevel.length() - 1) * 24), 28);
+            else graphics.drawString(currentLevel, 640 - ((currentLevel.length() - 1) * 24), 28);
         }
         
         if (paused || menuState > 0) {
@@ -1030,8 +1062,8 @@ class SpaceEnvironment extends Environment {
             graphics.drawString("how long the power-up has left before depleting.", 10, 360);
             graphics.drawString("You will complete the level by clearing out each", 10, 390);
             graphics.drawString("wave of aliens in the level, each getting faster and", 10, 405);
-            graphics.drawString("stronger as you progress. See how long you can", 10, 420);
-            graphics.drawString("survive before the aliens destroy you and your ship!", 10, 435);
+            graphics.drawString("stronger as you progress. Can you survive all 30", 10, 420);
+            graphics.drawString("waves of aliens and their mothership?", 10, 435);
             graphics.drawString("Press ESCAPE to return to menu", 140, 560);
             
             graphics.drawImage(im.getImage(SpriteManager.YELLOW_ALIEN), 136, 470, 48, 48, this);
@@ -1059,13 +1091,15 @@ class SpaceEnvironment extends Environment {
         } else if (menuState == 3) {
             graphics.setColor(Color.WHITE);
             graphics.setFont(spacefont_32);
-            graphics.drawString("GAME OVER", 176, 100);
+            if (endingGame) graphics.drawString("CONGRATULATIONS!", 64, 100);
+            else graphics.drawString("GAME OVER", 176, 100);
             if (newHighScore) {
                 graphics.drawString("NEW HIGHSCORE!", 96, 306);
             }
             graphics.setFont(spacefont_20);
-            graphics.drawString(String.format("Final Score: %08d%n", score), 100, 140);
-            graphics.drawString(String.format("Died On Level: %02d%n", level), 150, 170);
+            graphics.drawString(String.format("Final Score: %08d%n", score), 110, 140);
+            if (endingGame) graphics.drawString(String.format("Survived All Levels!", level), 120, 170);
+            else graphics.drawString(String.format("Died On Level: %02d%n", level), 150, 170);
             if (textBoxTimer <= 60) {
                 graphics.drawString(String.format("Press ENTER to continue", level), 90, 450);
             }

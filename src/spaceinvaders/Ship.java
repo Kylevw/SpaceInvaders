@@ -27,6 +27,8 @@ public class Ship extends Actor {
     
     private Direction direction;
     
+    private boolean flyUp;
+    
     private final int size;
     private final int width;
     private final int height;
@@ -139,16 +141,14 @@ public class Ship extends Actor {
         else if (direction == Direction.RIGHT) setVelocity(speed, 0);
         else setVelocity(0, getVelocity().y);
         
+        if (flyUp) setVelocity(0, -3);
+        
         if (invulTimer > 0) {
             invulTimer--;
         }
 
         flash = ((invulTimer + 3) / 6 == (invulTimer + 6) / 6);
-//        if ((invulTimer + 3) / 6 == (invulTimer + 6) / 6) {
-//            flash = true;
-//        } else {
-//            flash = false;
-//        }
+        
         if (fireCooldown == 0) {
             if (energy <= 15) {
                 energy++;
@@ -186,7 +186,7 @@ public class Ship extends Actor {
 
     private void shipLimiter() {
 
-        if (position.getY() > limiter.getMinY() + 1) {
+        if (position.getY() > limiter.getMinY() + 1 || flyUp) {
             setVelocity(0, -1);
         }
 
@@ -196,7 +196,7 @@ public class Ship extends Actor {
             setPosition(limiter.getMaxX(), getY());
         }
 
-        if (limiter.getMinY() > getY()) {
+        if (limiter.getMinY() > getY() && !flyUp) {
             setPosition(getX(), limiter.getMinY());
         } else if (limiter.getMaxY() < getY()) {
             setPosition(getX(), limiter.getMaxY());
@@ -286,6 +286,10 @@ public class Ship extends Actor {
     
     Direction getDirection() {
         return direction;
+    }
+    
+    public void flyUp() {
+        flyUp = true;
     }
     
 }
