@@ -42,6 +42,8 @@ class SpaceEnvironment extends Environment {
     private final ArrayList<TextBox> textBoxs;
     Ship ship;
     
+    private int finalLevel;
+    
     private int direction;
     private int yStarChange;
     private boolean spacebarDebug;
@@ -185,8 +187,9 @@ class SpaceEnvironment extends Environment {
                 am.playAudio(AudioManager.MOTHERSHIP_EXPLODE, false);
                 stopMusic();
                 am.playAudio(AudioManager.MENU, true);
-                level += difficulty * 10;
+                finalLevel = level + difficulty * 10;
                 difficulty = -1;
+                level = 0;
             }
             if (healthMeter == null) {
                 healthMeter = new StatMeter(StatMeter.RED, 16, 4, 480, 568, 3, im);
@@ -814,7 +817,7 @@ class SpaceEnvironment extends Environment {
                 levelUpTimer = -140;
                 menuState = 0;
                 ship = new Ship(im.getImage(SpriteManager.SHIP), new Point(296, 640), 3, new Velocity(0, 0), 9, new ShipMovementLimitProvider(24, 568, 505, 640), im, am);
-                textBoxs.add(new TextBox(32, 280, 220, false, false, spacefont_24, "LEFT/RIGHT ARROWS: Move"));
+                textBoxs.add(new TextBox(44, 280, 220, false, false, spacefont_24, "LEFT/RIGHT ARROWS: Move"));
                 textBoxs.add(new TextBox(164, 310, 220, false, false, spacefont_24, "SPACE: Shoot"));
                 textBoxs.add(new TextBox(128, 340, 220, false, false, spacefont_24, "ESC: Pause Game"));
                 stopMusic();
@@ -917,11 +920,11 @@ class SpaceEnvironment extends Environment {
             }
         } else if (type == Enemy.MEDIUM){
             for (int i = 0; i < amount; i++) {
-                enemies.add(new Enemy(im.getImage(SpriteManager.GREEN_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 22, type, im, new EnemyMovementLimitProvider(-1008, marchYPoint, attackYPoint, 0, 640), am));
+                enemies.add(new Enemy(im.getImage(SpriteManager.GREEN_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 20, type, im, new EnemyMovementLimitProvider(-1008, marchYPoint, attackYPoint, 0, 640), am));
             }
         } else if (type == Enemy.LARGE){
             for (int i = 0; i < amount; i++) {
-                enemies.add(new Enemy(im.getImage(SpriteManager.BLUE_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 36, type, im, new EnemyMovementLimitProvider(-1008, marchYPoint, attackYPoint, 0, 640), am));
+                enemies.add(new Enemy(im.getImage(SpriteManager.BLUE_ALIEN), new Point(x + (distance * i) + displacement, y), size, new Velocity(0, size * 2), 32, type, im, new EnemyMovementLimitProvider(-1008, marchYPoint, attackYPoint, 0, 640), am));
             }
         } else {
             System.out.println("ERROR summoning alien wave: Alien type not valid");
@@ -1098,10 +1101,10 @@ class SpaceEnvironment extends Environment {
             }
             graphics.setFont(spacefont_20);
             graphics.drawString(String.format("Final Score: %08d%n", score), 110, 140);
-            if (endingGame) graphics.drawString(String.format("Survived All Levels!", level), 120, 170);
-            else graphics.drawString(String.format("Died On Level: %02d%n", level), 150, 170);
+            if (endingGame) graphics.drawString("Survived All Levels!", 120, 170);
+            else graphics.drawString("Died On Level: " + finalLevel, 150, 170);
             if (textBoxTimer <= 60) {
-                graphics.drawString(String.format("Press ENTER to continue", level), 90, 450);
+                graphics.drawString("Press ENTER to continue", 90, 450);
             }
         }
     }
